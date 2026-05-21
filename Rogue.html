@@ -2,13 +2,13 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Rogue (USA) Pedigree</title>
     <style>
-        /* ===== 基础性别样式 (Ravager风格) ===== */
         .male {
             background-color: #ccccff;
             color: #0000ff;
-            font-family: Arial;
+            font-family: Arial, Helvetica, sans-serif;
             font-size: 8pt;
             text-align: center;
             vertical-align: middle;
@@ -19,7 +19,7 @@
         .female {
             background-color: #ffcccc;
             color: #0000ff;
-            font-family: Arial;
+            font-family: Arial, Helvetica, sans-serif;
             font-size: 8pt;
             text-align: center;
             vertical-align: middle;
@@ -27,42 +27,61 @@
             border: 1px solid #000000;
         }
 
-        /* ===== 重复祖先特殊高亮 (仅保留实际重复个体) ===== */
+        /* ===== 重复祖先特殊背景色===== */
         .dup-boldruler {
             background: linear-gradient(135deg, #ffd700, #ffb300);
             color: #000;
             font-weight: bold;
             border: 2px solid #cc8800;
         }
-
+        .dup-shenanigans {
+            background: linear-gradient(135deg, #d9d9d9, #b0b0b0);
+            color: #000;
+            font-weight: bold;
+            border: 2px solid #666666;
+        }
         .dup-native {
             background: linear-gradient(135deg, #98fb98, #66cc66);
             color: #000;
             font-weight: bold;
             border: 2px solid #228b22;
         }
-
+        .dup-boldirish {
+            background: linear-gradient(135deg, #ffb6c1, #ff69b4);
+            color: #000;
+            font-weight: bold;
+            border: 2px solid #c71585;
+        }
+        .dup-northerndancer {
+            background: linear-gradient(135deg, #87cefa, #4682b4);
+            color: #000;
+            font-weight: bold;
+            border: 2px solid #1e5aa8;
+        }
         .dup-nearco {
             background: linear-gradient(135deg, #dda0dd, #ba55d3);
             color: #000;
             font-weight: bold;
             border: 2px solid #7a2f8f;
         }
-
+        .dup-nearctic {
+            background: linear-gradient(135deg, #f5deb3, #d2b48c);
+            color: #000;
+            font-weight: bold;
+            border: 2px solid #8b6b3f;
+        }
         .dup-mahmoud {
             background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
             color: #000;
             font-weight: bold;
             border: 2px solid #8f5f9e;
         }
-
         .dup-blenheim {
             background: linear-gradient(135deg, #c2e0f0, #87b8d9);
             color: #000;
             font-weight: bold;
             border: 2px solid #2c6e9e;
         }
-
         .dup-discovery {
             background: linear-gradient(135deg, #ffcc99, #ff9966);
             color: #000;
@@ -70,17 +89,16 @@
             border: 2px solid #cc5500;
         }
 
-        /* ===== 近交分析汇总区块 ===== */
+        /* ===== 近交分析汇总块===== */
         .inbreed-summary {
             margin-top: 10px;
             padding: 8px;
             border: 1px solid #000;
-            font-family: Arial;
+            font-family: Arial, Helvetica, sans-serif;
             font-size: 9pt;
             background: #f7f7f7;
             line-height: 1.6;
         }
-
         .inbreed-tag {
             display: inline-block;
             padding: 2px 6px;
@@ -89,575 +107,460 @@
             font-weight: bold;
             border: 1px solid #333;
         }
+
+        /* ===== 赛绩表格样式===== */
+        .race-record-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 18px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 8.5pt;
+        }
+        .race-record-table td, .race-record-table th {
+            border: 1px solid #aaa;
+            padding: 6px 4px;
+            vertical-align: top;
+        }
+        .race-header {
+            background-color: #2c3e50;
+            color: white;
+            font-weight: bold;
+            font-size: 11pt;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        .race-section-header {
+            background-color: #e8eef2;
+            font-weight: bold;
+            font-size: 9.5pt;
+            text-align: left;
+            padding: 6px;
+            border-bottom: 2px solid #aaa;
+        }
+        .race-summary-row {
+            background-color: #f0f3f5;
+            font-weight: bold;
+            text-align: left;
+        }
+        .race-subtotal {
+            background-color: #f9f2e0;
+            font-weight: bold;
+            text-align: right;
+            padding-right: 12px;
+        }
+        .race-honors {
+            background-color: #d4efdf;
+            font-weight: bold;
+            text-align: center;
+            color: #1e5a3a;
+        }
+        .race-win {
+            background-color: #e0f2e9;
+        }
+        .race-second {
+            background-color: #fff2cc;
+        }
+        .race-third {
+            background-color: #e6f0fa;
+        }
+        .race-other {
+            background-color: #f9e5e5;
+        }
+        .race-narrative, .race-note-retired {
+            background-color: #f4f0ec;
+            font-style: italic;
+            padding: 8px;
+            color: #4a3b2c;
+            border-left: 3px solid #b0a088;
+        }
+        .text-left {
+            text-align: left;
+        }
+        .text-right {
+            text-align: right;
+        }
+        a {
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .pedigree-footer {
+            text-align: right;
+            padding-top: 6px;
+            font-size: 8pt;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        body {
+            background: #fff;
+            margin: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        /* 子嗣表格保持统一边框 */
+        .progeny-table {
+            width: 100%;
+            margin-top: 12px;
+        }
+        .progeny-table td, .progeny-table th {
+            border: 1px solid #aaa;
+            padding: 6px 4px;
+        }
     </style>
 </head>
 <body>
+<div class="container">
+    <!-- 血统表：Rogue (USA) 父母为 Cigar 与 Riot -->
+    <table border="0" cellpadding="0" width='95%' style="margin:0 auto;">
+        <tr>
+            <td>
+                <table style="border: 1px solid #000000; border-collapse: collapse;" border="1" cellpadding="0" cellspacing="0" width="100%">
+                    <!-- 完整血统 -->
+                    <tr>
+                        <td rowspan='64' width='14%' class='female'>Rogue (USA)<br>Dark Bay/Brown 1998</td>
+                        <td rowspan='32' width='14%' class='male'>Cigar (USA)<br>Bay 1990</td>
+                        <td rowspan='16' width='14%' class='male'>Palace Music (USA)<br>Chestnut 1981</td>
+                        <td rowspan='8' width='14%' class='male'>The Minstrel (CAN)<br>Chestnut 1974</td>
+                        <td rowspan='4' width='14%' class='male'>Northern Dancer (CAN)<br>Bay 1961</td>
+                        <td rowspan='2' width='14%' class='male'>Nearctic (CAN)<br>Brown 1954</td>
+                        <td rowspan='1' width='14%' class='male dup-nearco'>Nearco (ITY)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Lady Angela(GB)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='2' width='14%' class='female'>Natalma (USA)<br>Bay 1957</td>
+                        <td rowspan='1' width='14%' class='male dup-native'>Native Dancer (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Almahmoud (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='4' width='14%' class='female'>Fleur (CAN)<br>Bay 1964</td>
+                        <td rowspan='2' width='14%' class='male'>Victoria Park (CAN)<br>Bay 1957</td>
+                        <td rowspan='1' width='14%' class='male'>Chop Chop (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Victoriana (CAN)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='2' width='14%' class='female'>Flaming Page(CAN)<br>Bay 1959</td>
+                        <td rowspan='1' width='14%' class='male'>Bull Page (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Flaring Top (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='8' width='14%' class='female'>Come My Prince (USA)<br>Grey 1972</td>
+                        <td rowspan='4' width='14%' class='male'>Prince John (USA)<br>Chestnut 1953</td>
+                        <td rowspan='2' width='14%' class='male'>Princequillo (GB)<br>Bay 1940</td>
+                        <td rowspan='1' width='14%' class='male'>Prince Rose (GB)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Cosquilla (GB)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='2' width='14%' class='female'>Not Afraid (USA)<br>Brown 1948</td>
+                        <td rowspan='1' width='14%' class='male'>Count Fleet (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Banish Fear (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='4' width='14%' class='female'>Come Hither Look (USA)<br>Grey 1962</td>
+                        <td rowspan='2' width='14%' class='male'>Turn-to (IRE)<br>Bay 1951</td>
+                        <td rowspan='1' width='14%' class='male'>Royal Charger (GB)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Source Sucree (FR)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='2' width='14%' class='female'>Mumtaz (USA)<br>Grey 1954</td>
+                        <td rowspan='1' width='14%' class='male dup-mahmoud'>Mahmoud (FR)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Motto (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='16' width='14%' class='female'>Solar Slew (USA)<br>Dark Bay/Brown 1982</td>
+                        <td rowspan='8' width='14%' class='male'>Seattle Slew (USA)<br>Dark Bay/Brown 1974</td>
+                        <td rowspan='4' width='14%' class='male'>Bold Reasoning (USA)<br>Dark Bay/Brown 1968</td>
+                        <td rowspan='2' width='14%' class='male'>Boldnesian (USA)<br>Bay 1963</td>
+                        <td rowspan='1' width='14%' class='male dup-boldruler'>Bold Ruler (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Alanesian (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='2' width='14%' class='female'>Reason to Earn (USA)<br>Bay 1963</td>
+                        <td rowspan='1' width='14%' class='male'>Hail To Reason (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Sailing Home (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='4' width='14%' class='female'>My Charmer (USA)<br>Bay 1969</td>
+                        <td rowspan='2' width='14%' class='male'>Poker (USA)<br>Bay 1963</td>
+                        <td rowspan='1' width='14%' class='male'>Round Table (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Glamour (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='2' width='14%' class='female'>Fair Charmer (USA)<br>Chestnut 1959</td>
+                        <td rowspan='1' width='14%' class='male'>Jet Action (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Myrtle Charm (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='8' width='14%' class='female'>Gold Sun (ARG)<br>Bay 1974</td>
+                        <td rowspan='4' width='14%' class='male'>Solazo (USA)<br>Bay 1959</td>
+                        <td rowspan='2' width='14%' class='male'>Beau Max (USA)<br>Brown 1947</td>
+                        <td rowspan='1' width='14%' class='male'>Bull Lea (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Bee Mac (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='2' width='14%' class='female'>Solar System (USA)<br>Chestnut 1944</td>
+                        <td rowspan='1' width='14%' class='male'>Hyperion (GB)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Jury (GB)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='4' width='14%' class='female'>Jungle Queen (ARG)<br>Bay 1956</td>
+                        <td rowspan='2' width='14%' class='male'>Claro (GB)<br>Bay 1943</td>
+                        <td rowspan='1' width='14%' class='male'>Colombo (GB)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Clovelly (GB)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='2' width='14%' class='female'>Agrippine (ARG)<br>Chestnut 1948</td>
+                        <td rowspan='1' width='14%' class='male'>Foxhunter (GB)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Vipsania (FR)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='32' width='14%' class='female'>Riot (USA)<br>Dark Bay/Brown 1990</td>
+                        <td rowspan='16' width='14%' class='male'>Foolish Pleasure (USA)<br>Bay 1972</td>
+                        <td rowspan='8' width='14%' class='male'>What a Pleasure (USA)<br>Chestnut 1965</td>
+                        <td rowspan='4' width='14%' class='male dup-boldruler'>Bold Ruler (USA)<br>Dark Bay/Brown 1954</td>
+                        <td rowspan='2' width='14%' class='male'>Nasrullah (GB)<br>Bay 1940</td>
+                        <td rowspan='1' width='14%' class='male dup-nearco'>Nearco (ITY)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Mumtaz Begum (FR)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='2' width='14%' class='female dup-discovery'>Miss Disco (USA)<br>Bay 1944</td>
+                        <td rowspan='1' width='14%' class='male dup-discovery'>Discovery (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Outdone (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='4' width='14%' class='female'>Grey Flight (USA)<br>Grey 1945</td>
+                        <td rowspan='2' width='14%' class='male dup-mahmoud'>Mahmoud (FR)<br>Grey 1933</td>
+                        <td rowspan='1' width='14%' class='male dup-blenheim'>Blenheim (GB)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Mah Mahal (GB)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='2' width='14%' class='female'>Planetoid (USA)<br>Grey 1934</td>
+                        <td rowspan='1' width='14%' class='male'>Ariel (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>La Chica (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='8' width='14%' class='female'>Fool-me-not (USA)<br>Bay 1958</td>
+                        <td rowspan='4' width='14%' class='male'>Tom Fool (USA)<br>Bay 1949</td>
+                        <td rowspan='2' width='14%' class='male'>Menow (USA)<br>Bay 1935</td>
+                        <td rowspan='1' width='14%' class='male'>Pharamond (GB)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Alcibiades (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='2' width='14%' class='female'>Gaga (USA)<br>Bay 1942</td>
+                        <td rowspan='1' width='14%' class='male'>Bull Dog (FR)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Alpoise (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='4' width='14%' class='female'>Cuadrilla (FR)<br>Chestnut 1943</td>
+                        <td rowspan='2' width='14%' class='male'>Tourbillon (FR)<br>Bay 1928</td>
+                        <td rowspan='1' width='14%' class='male'>Ksar (FR)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Durban (FR)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='2' width='14%' class='female'>Bouillabaisse (GB)<br>Chestnut 1935</td>
+                        <td rowspan='1' width='14%' class='male dup-blenheim'>Blenheim (GB)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Becti (GB)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='16' width='14%' class='female'>Ruffian (USA)<br>Dark Bay/Brown 1972</td>
+                        <td rowspan='8' width='14%' class='male'>Reviewer (USA)<br>Bay 1966</td>
+                        <td rowspan='4' width='14%' class='male dup-boldruler'>Bold Ruler (USA)<br>Dark Bay/Brown 1954</td>
+                        <td rowspan='2' width='14%' class='male'>Nasrullah (GB)<br>Bay 1940</td>
+                        <td rowspan='1' width='14%' class='male dup-nearco'>Nearco (ITY)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Mumtaz Begum (FR)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='2' width='14%' class='female dup-discovery'>Miss Disco (USA)<br>Bay 1944</td>
+                        <td rowspan='1' width='14%' class='male dup-discovery'>Discovery (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Outdone (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='4' width='14%' class='female'>Broadway (USA)<br>Bay 1959</td>
+                        <td rowspan='2' width='14%' class='male'>Hasty Road (USA)<br>Bay 1951</td>
+                        <td rowspan='1' width='14%' class='male'>Roman (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Traffic Court (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='2' width='14%' class='female'>Flitabout (USA)<br>Bay 1945</td>
+                        <td rowspan='1' width='14%' class='male'>Challedon (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Bird Flower (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='8' width='14%' class='female'>Shenanigans (USA)<br>Grey 1963</td>
+                        <td rowspan='4' width='14%' class='male dup-native'>Native Dancer (USA)<br>Grey 1950</td>
+                        <td rowspan='2' width='14%' class='male'>Polynesian (USA)<br>Brown 1942</td>
+                        <td rowspan='1' width='14%' class='male'>Unbreakable (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Black Polly (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='2' width='14%' class='female'>Geisha (USA)<br>Grey 1943</td>
+                        <td rowspan='1' width='14%' class='male dup-discovery'>Discovery (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Miyako (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='4' width='14%' class='female'>Bold Irish (USA)<br>Dark Bay/Brown 1948</td>
+                        <td rowspan='2' width='14%' class='male'>Fighting Fox (USA)<br>Bay 1935</td>
+                        <td rowspan='1' width='14%' class='male'>Sir Gallahad (FR)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Marguerite (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='2' width='14%' class='female'>Erin (USA)<br>Bay 1927</td>
+                        <td rowspan='1' width='14%' class='male'>Transmut (USA)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan='1' width='14%' class='female'>Rosie Ogrady (USA)</td>
+                    </tr>
+                </table>
 
-<!-- 血统表：Rogue (USA) 父母为 Cigar 与 Riot，样式完全遵循 Ravager.html，仅标记真实重复祖先 -->
-<table border="0" cellpadding="0" width='95%'>
-    <tr><td>
-        <table style="border: 1px solid #000000; border-collapse: collapse;" border="1" cellpadding="0" cellspacing="0" width="100%">
-            <!-- ********** 完整血统 (基于原始Riot.html数据，未改动马名/年代/性别，只修改重复祖先的高亮类) ********** -->
-            <tr>
-                <td rowspan='64' width='14%' class='female'>Rogue (USA)<br>Dark Bay/Brown 1998</td>
-                <td rowspan='32' width='14%' class='male'>Cigar (USA)<br>Bay 1990</td>
-                <td rowspan='16' width='14%' class='male'>Palace Music (USA)<br>Chestnut 1981</td>
-                <td rowspan='8' width='14%' class='male'>The Minstrel (CAN)<br>Chestnut 1974</td>
-                <td rowspan='4' width='14%' class='male'>Northern Dancer (CAN)<br>Bay 1961</td>
-                <td rowspan='2' width='14%' class='male'>Nearctic (CAN)<br>Brown 1954</td>
-                <td rowspan='1' width='14%' class='male dup-nearco'>Nearco (ITY)</td>
-            </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Lady Angela(GB)</td>
-            </tr>
-            <tr>
-                <td rowspan='2' width='14%' class='female'>Natalma (USA)<br>Bay 1957</td>
-                <td rowspan='1' width='14%' class='male dup-native'>Native Dancer (USA)</td>
-            </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Almahmoud (USA)</td>
-            </tr>
-            <tr>
-                <td rowspan='4' width='14%' class='female'>Fleur (CAN)<br>Bay 1964</td>
-                <td rowspan='2' width='14%' class='male'>Victoria Park (CAN)<br>Bay 1957</td>
-                <td rowspan='1' width='14%' class='male'>Chop Chop (USA)</td>
-            </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Victoriana (CAN)</td>
-            </tr>
-            <tr>
-                <td rowspan='2' width='14%' class='female'>Flaming Page(CAN)<br>Bay 1959</td>
-                <td rowspan='1' width='14%' class='male'>Bull Page (USA)</td>
-             </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Flaring Top (USA)</td>
-             </tr>
-            <tr>
-                <td rowspan='8' width='14%' class='female'>Come My Prince (USA)<br>Grey 1972</td>
-                <td rowspan='4' width='14%' class='male'>Prince John (USA)<br>Chestnut 1953</td>
-                <td rowspan='2' width='14%' class='male'>Princequillo (GB)<br>Bay 1940</td>
-                <td rowspan='1' width='14%' class='male'>Prince Rose (GB)</td>
-             </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Cosquilla (GB)</td>
-             </tr>
-            <tr>
-                <td rowspan='2' width='14%' class='female'>Not Afraid (USA)<br>Brown 1948</td>
-                <td rowspan='1' width='14%' class='male'>Count Fleet (USA)</td>
-             </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Banish Fear (USA)</td>
-             </tr>
-            <tr>
-                <td rowspan='4' width='14%' class='female'>Come Hither Look (USA)<br>Grey 1962</td>
-                <td rowspan='2' width='14%' class='male'>Turn-to (IRE)<br>Bay 1951</td>
-                <td rowspan='1' width='14%' class='male'>Royal Charger (GB)</td>
-             </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Source Sucree (FR)</td>
-             </tr>
-            <tr>
-                <td rowspan='2' width='14%' class='female'>Mumtaz (USA)<br>Grey 1954</td>
-                <td rowspan='1' width='14%' class='male dup-mahmoud'>Mahmoud (FR)</td>
-             </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Motto (USA)</td>
-             </tr>
-            <tr>
-                <td rowspan='16' width='14%' class='female'>Solar Slew (USA)<br>Dark Bay/Brown 1982</td>
-                <td rowspan='8' width='14%' class='male'>Seattle Slew (USA)<br>Dark Bay/Brown 1974</td>
-                <td rowspan='4' width='14%' class='male'>Bold Reasoning (USA)<br>Dark Bay/Brown 1968</td>
-                <td rowspan='2' width='14%' class='male'>Boldnesian (USA)<br>Bay 1963</td>
-                <td rowspan='1' width='14%' class='male dup-boldruler'>Bold Ruler (USA)</td>
-             </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Alanesian (USA)</td>
-             </tr>
-            <tr>
-                <td rowspan='2' width='14%' class='female'>Reason to Earn (USA)<br>Bay 1963</td>
-                <td rowspan='1' width='14%' class='male'>Hail To Reason (USA)</td>
-             </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Sailing Home (USA)</td>
-             </tr>
-            <tr>
-                <td rowspan='4' width='14%' class='female'>My Charmer (USA)<br>Bay 1969</td>
-                <td rowspan='2' width='14%' class='male'>Poker (USA)<br>Bay 1963</td>
-                <td rowspan='1' width='14%' class='male'>Round Table (USA)</td>
-             </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Glamour (USA)</td>
-             </tr>
-            <tr>
-                <td rowspan='2' width='14%' class='female'>Fair Charmer (USA)<br>Chestnut 1959</td>
-                <td rowspan='1' width='14%' class='male'>Jet Action (USA)</td>
-             </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Myrtle Charm (USA)</td>
-             </tr>
-            <tr>
-                <td rowspan='8' width='14%' class='female'>Gold Sun (ARG)<br>Bay 1974</td>
-                <td rowspan='4' width='14%' class='male'>Solazo (USA)<br>Bay 1959</td>
-                <td rowspan='2' width='14%' class='male'>Beau Max (USA)<br>Brown 1947</td>
-                <td rowspan='1' width='14%' class='male'>Bull Lea (USA)</td>
-             </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Bee Mac (USA)</td>
-             </tr>
-            <tr>
-                <td rowspan='2' width='14%' class='female'>Solar System (USA)<br>Chestnut 1944</td>
-                <td rowspan='1' width='14%' class='male'>Hyperion (GB)</td>
-             </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Jury (GB)</td>
-             </tr>
-            <tr>
-                <td rowspan='4' width='14%' class='female'>Jungle Queen (ARG)<br>Bay 1956</td>
-                <td rowspan='2' width='14%' class='male'>Claro (GB)<br>Bay 1943</td>
-                <td rowspan='1' width='14%' class='male'>Colombo (GB)</td>
-             </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Clovelly (GB)</td>
-             </tr>
-            <tr>
-                <td rowspan='2' width='14%' class='female'>Agrippine (ARG)<br>Chestnut 1948</td>
-                <td rowspan='1' width='14%' class='male'>Foxhunter (GB)</td>
-             </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Vipsania (FR)</td>
-             </tr>
-            <tr>
-                <td rowspan='32' width='14%' class='female'>Riot (USA)<br>Dark Bay/Brown 1990</td>
-                <td rowspan='16' width='14%' class='male'>Foolish Pleasure (USA)<br>Bay 1972</td>
-                <td rowspan='8' width='14%' class='male'>What a Pleasure (USA)<br>Chestnut 1965</td>
-                <td rowspan='4' width='14%' class='male dup-boldruler'>Bold Ruler (USA)<br>Dark Bay/Brown 1954</td>
-                <td rowspan='2' width='14%' class='male'>Nasrullah (GB)<br>Bay 1940</td>
-                <td rowspan='1' width='14%' class='male dup-nearco'>Nearco (ITY)</td>
-            </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Mumtaz Begum (FR)</td>
-            </tr>
-            <tr>
-                <td rowspan='2' width='14%' class='female dup-discovery'>Miss Disco (USA)<br>Bay 1944</td>
-                <td rowspan='1' width='14%' class='male dup-discovery'>Discovery (USA)</td>
-            </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Outdone (USA)</td>
-            </tr>
-            <tr>
-                <td rowspan='4' width='14%' class='female'>Grey Flight (USA)<br>Grey 1945</td>
-                <td rowspan='2' width='14%' class='male dup-mahmoud'>Mahmoud (FR)<br>Grey 1933</td>
-                <td rowspan='1' width='14%' class='male dup-blenheim'>Blenheim (GB)</td>
-            </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Mah Mahal (GB)</td>
-            </tr>
-            <tr>
-                <td rowspan='2' width='14%' class='female'>Planetoid (USA)<br>Grey 1934</td>
-                <td rowspan='1' width='14%' class='male'>Ariel (USA)</td>
-            </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>La Chica (USA)</td>
-            </tr>
-            <tr>
-                <td rowspan='8' width='14%' class='female'>Fool-me-not (USA)<br>Bay 1958</td>
-                <td rowspan='4' width='14%' class='male'>Tom Fool (USA)<br>Bay 1949</td>
-                <td rowspan='2' width='14%' class='male'>Menow (USA)<br>Bay 1935</td>
-                <td rowspan='1' width='14%' class='male'>Pharamond (GB)</td>
-            </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Alcibiades (USA)</td>
-            </tr>
-            <tr>
-                <td rowspan='2' width='14%' class='female'>Gaga (USA)<br>Bay 1942</td>
-                <td rowspan='1' width='14%' class='male'>Bull Dog (FR)</td>
-            </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Alpoise (USA)</td>
-            </tr>
-            <tr>
-                <td rowspan='4' width='14%' class='female'>Cuadrilla (FR)<br>Chestnut 1943</td>
-                <td rowspan='2' width='14%' class='male'>Tourbillon (FR)<br>Bay 1928</td>
-                <td rowspan='1' width='14%' class='male'>Ksar (FR)</td>
-            </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Durban (FR)</td>
-            </tr>
-            <tr>
-                <td rowspan='2' width='14%' class='female'>Bouillabaisse (GB)<br>Chestnut 1935</td>
-                <td rowspan='1' width='14%' class='male dup-blenheim'>Blenheim (GB)</td>
-            </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Becti (GB)</td>
-            </tr>
-            <tr>
-                <td rowspan='16' width='14%' class='female'>Ruffian (USA)<br>Dark Bay/Brown 1972</td>
-                <td rowspan='8' width='14%' class='male'>Reviewer (USA)<br>Bay 1966</td>
-                <td rowspan='4' width='14%' class='male dup-boldruler'>Bold Ruler (USA)<br>Dark Bay/Brown 1954</td>
-                <td rowspan='2' width='14%' class='male'>Nasrullah (GB)<br>Bay 1940</td>
-                <td rowspan='1' width='14%' class='male dup-nearco'>Nearco (ITY)</td>
-            </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Mumtaz Begum (FR)</td>
-            </tr>
-            <tr>
-                <td rowspan='2' width='14%' class='female dup-discovery'>Miss Disco (USA)<br>Bay 1944</td>
-                <td rowspan='1' width='14%' class='male dup-discovery'>Discovery (USA)</td>
-            </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Outdone (USA)</td>
-            </tr>
-            <tr>
-                <td rowspan='4' width='14%' class='female'>Broadway (USA)<br>Bay 1959</td>
-                <td rowspan='2' width='14%' class='male'>Hasty Road (USA)<br>Bay 1951</td>
-                <td rowspan='1' width='14%' class='male'>Roman (USA)</td>
-            </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Traffic Court (USA)</td>
-            </tr>
-            <tr>
-                <td rowspan='2' width='14%' class='female'>Flitabout (USA)<br>Bay 1945</td>
-                <td rowspan='1' width='14%' class='male'>Challedon (USA)</td>
-            </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Bird Flower (USA)</td>
-            </tr>
-            <tr>
-                <td rowspan='8' width='14%' class='female'>Shenanigans (USA)<br>Grey 1963</td>
-                <td rowspan='4' width='14%' class='male dup-native'>Native Dancer (USA)<br>Grey 1950</td>
-                <td rowspan='2' width='14%' class='male'>Polynesian (USA)<br>Brown 1942</td>
-                <td rowspan='1' width='14%' class='male'>Unbreakable (USA)</td>
-            </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Black Polly (USA)</td>
-            </tr>
-            <tr>
-                <td rowspan='2' width='14%' class='female'>Geisha (USA)<br>Grey 1943</td>
-                <td rowspan='1' width='14%' class='male dup-discovery'>Discovery (USA)</td>
-            </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Miyako (USA)</td>
-            </tr>
-            <tr>
-                <td rowspan='4' width='14%' class='female'>Bold Irish (USA)<br>Dark Bay/Brown 1948</td>
-                <td rowspan='2' width='14%' class='male'>Fighting Fox (USA)<br>Bay 1935</td>
-                <td rowspan='1' width='14%' class='male'>Sir Gallahad (FR)</td>
-             </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Marguerite (USA)</td>
-             </tr>
-            <tr>
-                <td rowspan='2' width='14%' class='female'>Erin (USA)<br>Bay 1927</td>
-                <td rowspan='1' width='14%' class='male'>Transmut (USA)</td>
-             </tr>
-            <tr>
-                <td rowspan='1' width='14%' class='female'>Rosie Ogrady (USA)</td>
-             </tr>
-        </table>
-
-        <!-- 近交分析摘要：只包含真实重复出现的祖先（依据Rogue/Riot实际血统计算） -->
-        <div class="inbreed-summary">
-            <b>Inbreeding Analysis</b><br>
-            <span class="inbreed-tag dup-boldruler">Bold Ruler 4×4×6</span>
-            <span class="inbreed-tag dup-native">Native Dancer 4×6</span>
-            <span class="inbreed-tag dup-nearco">Nearco 5×5×6</span>
-            <span class="inbreed-tag dup-mahmoud">Mahmoud 4×5</span>
-            <span class="inbreed-tag dup-blenheim">Blenheim 5×6</span>
-            <span class="inbreed-tag dup-discovery">Discovery 4×5×5</span>
-        </div>
-    </td>
-   </tr>
-    <tr>
-        <td align="right" valign="top" style="padding-top: 0px;margin-top: 0px;font-size:8pt;font-family: Arial">
-            <a href="http://www.pedigreequery.com/">Pedigree</a> generated by PedigreeQuery.com
-        </td>
-    </tr>
-</table>
-    
-    <!-- ==================== 战绩列表 (风格与血统表统一) ==================== -->
-    <table border="0" cellpadding="0" width='95%' style="margin-top: 18px;">
-        <tr><td>
-            <table class="race-record-table" border="1" cellpadding="0" cellspacing="0">
-                <!-- 标题行 -->
-                <tr>
-                    <td colspan="8" class="race-header">Rogue (USA) &mdash; Race Record &amp; Results</td>
-                </tr>
-                <!-- 总战绩 -->
-                <tr>
-                    <td colspan="8" class="race-summary-row text-left">
-                        15 Starts: 9-3-1-2 &nbsp;&#124;&nbsp; Earnings: $1,126,930
-                    </td>
-                </tr>
-                <!-- 2000 赛季标题 -->
-                <tr>
-                    <td colspan="8" class="race-section-header">&#9656; 2000 Season &mdash; 7 Starts: 5-2-0-0 &nbsp;&#124;&nbsp; Earnings: $480,950</td>
-                </tr>
-                <!-- 叙述段落 -->
-                <tr>
-                    <td colspan="8" class="race-narrative">
-                        &#9670; Two months before her debut &mdash; on her sire's birthday and the day after her granddam died &mdash; her dam,
-                        unable to find her own dam, went berserk in the paddock, suffered a fracture in a paddock accident, and was
-                        euthanised.
-                    </td>
-                </tr>
-                <!-- 2000 表头 -->
-                <tr style="background-color:#d5d5d5; font-weight:bold; font-size:7.5pt;">
-                    <td width="7%">Date</td>
-                    <td width="27%">Race</td>
-                    <td width="7%">Grade</td>
-                    <td width="10%">Track</td>
-                    <td width="7%">Dist.</td>
-                    <td width="8%">Finish</td>
-                    <td width="13%">Earnings</td>
-                    <td width="21%">Margin / Notes</td>
-                </tr>
-                <!-- 2000 R1: MSW -->
-                <tr class="race-win">
-                    <td>May 29</td>
-                    <td class="text-left">MSW</td>
-                    <td>&mdash;</td>
-                    <td>Belmont</td>
-                    <td>5 FD</td>
-                    <td><b>Win</b></td>
-                    <td>$24,600</td>
-                    <td class="text-left">Debut victory</td>
-                </tr>
-                <!-- 2000 R2: Schuylerville (6.26 在 7.2 之前，按日期排列) -->
-                <tr class="race-win">
-                    <td>Jun 26</td>
-                    <td class="text-left">Schuylerville Stakes</td>
-                    <td>G2</td>
-                    <td>Saratoga</td>
-                    <td>6 FD</td>
-                    <td><b>Win</b></td>
-                    <td>$64,920</td>
-                    <td class="text-left">7&frac12; lengths over Gold Mover</td>
-                </tr>
-                <!-- 2000 R3: Astoria -->
-                <tr class="race-second">
-                    <td>Jul 2</td>
-                    <td class="text-left">Astoria Stakes</td>
-                    <td>List</td>
-                    <td>Belmont</td>
-                    <td>5&frac12; FD</td>
-                    <td><b>Second</b></td>
-                    <td>$21,430</td>
-                    <td class="text-left">2 lengths behind Raging Fever</td>
-                </tr>
-                <!-- 2000 R4: Adirondack -->
-                <tr class="race-win">
-                    <td>Aug 14</td>
-                    <td class="text-left">Adirondack Stakes</td>
-                    <td>G2</td>
-                    <td>Saratoga</td>
-                    <td>6&frac12; FD</td>
-                    <td><b>Win</b></td>
-                    <td>$90,000</td>
-                    <td class="text-left">3 lengths over Raging Fever</td>
-                </tr>
-                <!-- 2000 R5: Spinaway -->
-                <tr class="race-win">
-                    <td>Sep 1</td>
-                    <td class="text-left">Spinaway Stakes</td>
-                    <td>G1</td>
-                    <td>Saratoga</td>
-                    <td>7 FD</td>
-                    <td><b>Win</b></td>
-                    <td>$120,000</td>
-                    <td class="text-left">1 length over Stormy Pick</td>
-                </tr>
-                <!-- 2000 R6: Frizette -->
-                <tr class="race-second">
-                    <td>Oct 14</td>
-                    <td class="text-left">Frizette Stakes</td>
-                    <td>G1</td>
-                    <td>Belmont</td>
-                    <td>8&frac12; FD</td>
-                    <td><b>Second</b></td>
-                    <td>$100,000</td>
-                    <td class="text-left">2&frac12; lengths behind Raging Fever</td>
-                </tr>
-                <!-- 2000 R7: What A. Pleasure -->
-                <tr class="race-win">
-                    <td>Dec 9</td>
-                    <td class="text-left">What A. Pleasure Stakes</td>
-                    <td>G2</td>
-                    <td>Calder</td>
-                    <td>8&frac12; FD</td>
-                    <td><b>Win</b></td>
-                    <td>$60,000</td>
-                    <td class="text-left">7 lengths over Radical Riley</td>
-                </tr>
-                <!-- 2000 小计 -->
-                <tr>
-                    <td colspan="8" class="race-subtotal">2000 Subtotal: 7 Starts &mdash; 5 Wins, 2 Seconds &nbsp;&#124;&nbsp;
-                        $480,950</td>
-                </tr>
-
-                <!-- 2001 赛季标题 -->
-                <tr>
-                    <td colspan="8" class="race-section-header">&#9656; 2001 Season &mdash; 8 Starts: 4-1-1-2 &nbsp;&#124;&nbsp;
-                        Earnings: $645,980</td>
-                </tr>
-                <!-- 2001 表头 -->
-                <tr style="background-color:#d5d5d5; font-weight:bold; font-size:7.5pt;">
-                    <td>Date</td>
-                    <td>Race</td>
-                    <td>Grade</td>
-                    <td>Track</td>
-                    <td>Dist.</td>
-                    <td>Finish</td>
-                    <td>Earnings</td>
-                    <td>Margin / Notes</td>
-                </tr>
-                <!-- 2001 R1: Forward Gal -->
-                <tr class="race-second">
-                    <td>Jan 28</td>
-                    <td class="text-left">Forward Gal Stakes</td>
-                    <td>G3</td>
-                    <td>Gulfstream</td>
-                    <td>7 FD</td>
-                    <td><b>Second</b></td>
-                    <td>$30,000</td>
-                    <td class="text-left">2&frac12; lengths behind Gold Mover</td>
-                </tr>
-                <!-- 2001 R2: Davona Dale -->
-                <tr class="race-other">
-                    <td>Feb 25</td>
-                    <td class="text-left">Davona Dale Stakes</td>
-                    <td>G3</td>
-                    <td>Gulfstream</td>
-                    <td>8&frac12; FD</td>
-                    <td><b>Fourth</b></td>
-                    <td>$9,000</td>
-                    <td class="text-left">4 lengths behind winner Latour</td>
-                </tr>
-                <!-- 2001 R3: Comely -->
-                <tr class="race-win">
-                    <td>Apr 13</td>
-                    <td class="text-left">Comely Stakes</td>
-                    <td>G3</td>
-                    <td>Aqueduct</td>
-                    <td>8 FD</td>
-                    <td><b>Win</b></td>
-                    <td>$66,060</td>
-                    <td class="text-left">Promoted from 2nd; Mandy's Gold DQ'd (stewards' inquiry)</td>
-                </tr>
-                <!-- 2001 R4: Kentucky Oaks -->
-                <tr class="race-third">
-                    <td>May 4</td>
-                    <td class="text-left">Kentucky Oaks</td>
-                    <td>G1</td>
-                    <td>Churchill Downs</td>
-                    <td>9 FD</td>
-                    <td><b>Third</b></td>
-                    <td>$60,920</td>
-                    <td class="text-left">3&frac12; lengths behind winner Flute</td>
-                </tr>
-                <!-- 2001 R5: Acorn -->
-                <tr class="race-win">
-                    <td>Jun 8</td>
-                    <td class="text-left">Acorn Stakes</td>
-                    <td>G1</td>
-                    <td>Belmont</td>
-                    <td>8 FD</td>
-                    <td><b>Win</b></td>
-                    <td>$120,000</td>
-                    <td class="text-left">8&frac12; lengths over Forest Secrets</td>
-                </tr>
-                <!-- 2001 R6: Mother Goose -->
-                <tr class="race-win">
-                    <td>Jun 30</td>
-                    <td class="text-left">Mother Goose Stakes</td>
-                    <td>G1</td>
-                    <td>Belmont</td>
-                    <td>9 FD</td>
-                    <td><b>Win</b></td>
-                    <td>$150,000</td>
-                    <td class="text-left">14 lengths over Fleet Renee</td>
-                </tr>
-                <!-- 2001 R7: Coaching Club American Oaks -->
-                <tr class="race-win">
-                    <td>Jul 21</td>
-                    <td class="text-left">Coaching Club American Oaks</td>
-                    <td>G1</td>
-                    <td>Belmont</td>
-                    <td>12 FD</td>
-                    <td><b>Win</b></td>
-                    <td>$210,000</td>
-                    <td class="text-left">1&frac12; lengths over Tweedside</td>
-                </tr>
-                <!-- 2001 R8: Travers -->
-                <tr class="race-other">
-                    <td>Aug 25</td>
-                    <td class="text-left">Travers Stakes</td>
-                    <td>G1</td>
-                    <td>Saratoga</td>
-                    <td>10 FD</td>
-                    <td><b>Eighth</b></td>
-                    <td>$0</td>
-                    <td class="text-left">13&frac12; lengths behind winner Point Given</td>
-                </tr>
-                <!-- 退役注释 -->
-                <tr>
-                    <td colspan="8" class="race-note-retired">&#9670; Condylar fractures sustained; retired from racing.</td>
-                </tr>
-                <!-- 2001 小计 -->
-                <tr>
-                    <td colspan="8" class="race-subtotal">2001 Subtotal: 8 Starts &mdash; 4 Wins, 1 Second, 1 Third, 2 Other
-                        &nbsp;&#124;&nbsp; $645,980</td>
-                </tr>
-                <!-- 荣誉 -->
-                <tr>
-                    <td colspan="8" class="race-honors">&#9733; Eclipse Awards: Champion Three-Year-Old Filly</td>
-                </tr>
-            </table>
-        </td>
+                <!-- 近交分析摘要 -->
+                <div class="inbreed-summary">
+                    <b>Inbreeding Analysis</b><br>
+                    <span class="inbreed-tag dup-boldruler">Bold Ruler 4×4×6</span>
+                    <span class="inbreed-tag dup-native">Native Dancer 4×6</span>
+                    <span class="inbreed-tag dup-nearco">Nearco 5×5×6</span>
+                    <span class="inbreed-tag dup-mahmoud">Mahmoud 4×5</span>
+                    <span class="inbreed-tag dup-blenheim">Blenheim 5×6</span>
+                    <span class="inbreed-tag dup-discovery">Discovery 4×5×5</span>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td align="right" valign="top" class="pedigree-footer">
+                <a href="http://www.pedigreequery.com/">Pedigree</a> generated by PedigreeQuery.com
+            </td>
         </tr>
     </table>
-    
-<table class="race-record-table" border="1" cellpadding="0" cellspacing="0" style="margin-top:12px;">
-  <tr>
-    <td colspan="4" class="race-header">Progeny of Rogue (USA)</td>
-  </tr>
-  <tr style="background-color:#d5d5d5; font-weight:bold; font-size:7.5pt;">
-    <td width="10%">Year</td>
-    <td width="35%">Name</td>
-    <td width="25%">Color / Gender</td>
-    <td width="30%">Sire</td>
-  </tr>
-  <tr class="female">
-    <td>2007</td>
-    <td><a href="https://wisteriachestnut.github.io/Pedigree/Ravager" target="_blank">Ravager</a></td>
-    <td>Grey/Roan Mare</td>
-    <td>Day Trader</td>
-  </tr>
-  <tr class="male">
-    <td>2008</td>
-    <td><a href="https://wisteriachestnut.github.io/Pedigree/Rigging" target="_blank">Rigging</a></td>
-    <td>Grey/Roan Horse</td>
-    <td>Day Trader</td>
-  </tr>
-  <tr class="male">
-    <td>2009</td>
-    <td><a href="https://wisteriachestnut.github.io/Pedigree/Rascality" target="_blank">Rascality</a></td>
-    <td>Dark Bay/Brown Horse</td>
-    <td>Tricky Creek</td>
-  </tr>
-  <tr class="male">
-    <td>2010</td>
-    <td><a href="https://wisteriachestnut.github.io/Pedigree/Reckoning" target="_blank">Reckoning</a></td>
-    <td>Dark Bay/Brown Horse</td>
-    <td>Offlee Wild</td>
-  </tr>
-  <tr class="female">
-    <td>2012</td>
-    <td><a href="https://wisteriachestnut.github.io/Pedigree/Rampage" target="_blank">Rampage</a></td>
-    <td>Dark Bay/Brown Mare</td>
-    <td>Day Trader</td>
-  </tr>
-</table>
-    
-    
+
+    <!-- ==================== 赛绩表格 ==================== -->
+    <table class="race-record-table" border="1" cellpadding="0" cellspacing="0">
+        <tr>
+            <td colspan="8" class="race-header">Rogue (USA) — Race Record &amp; Results</td>
+        </tr>
+        <tr>
+            <td colspan="8" class="race-summary-row text-left">
+                15 Starts: 9-3-1-2 &nbsp;|&nbsp; Earnings: $1,126,930
+            </td>
+        </tr>
+        <!-- 2000赛季 -->
+        <tr>
+            <td colspan="8" class="race-section-header">▶ 2000 Season — 7 Starts: 5-2-0-0 &nbsp;|&nbsp; Earnings: $480,950</td>
+        </tr>
+        <tr class="race-narrative">
+            <td colspan="8">◇ Two months before her debut — on her sire's birthday and the day after her granddam died — her dam, unable to find her own dam, went berserk in the paddock, suffered a fracture in a paddock accident, and was euthanised.</td>
+        </tr>
+        <tr style="background-color:#d5d5d5; font-weight:bold; font-size:7.5pt;">
+            <td width="7%">Date</td><td width="27%">Race</td><td width="7%">Grade</td><td width="10%">Track</td>
+            <td width="7%">Dist.</td><td width="8%">Finish</td><td width="13%">Earnings</td><td width="21%">Margin / Notes</td>
+        </tr>
+        <tr class="race-win"><td>May 29</td><td class="text-left">MSW</td><td>—</td><td>Belmont</td><td>5 FD</td><td><b>Win</b></td><td>$24,600</td><td class="text-left">Debut victory</td></tr>
+        <tr class="race-win"><td>Jun 26</td><td class="text-left">Schuylerville Stakes</td><td>G2</td><td>Saratoga</td><td>6 FD</td><td><b>Win</b></td><td>$64,920</td><td class="text-left">7½ lengths over Gold Mover</td></tr>
+        <tr class="race-second"><td>Jul 2</td><td class="text-left">Astoria Stakes</td><td>List</td><td>Belmont</td><td>5½ FD</td><td><b>Second</b></td><td>$21,430</td><td class="text-left">2 lengths behind Raging Fever</td></tr>
+        <tr class="race-win"><td>Aug 14</td><td class="text-left">Adirondack Stakes</td><td>G2</td><td>Saratoga</td><td>6½ FD</td><td><b>Win</b></td><td>$90,000</td><td class="text-left">3 lengths over Raging Fever</td></tr>
+        <tr class="race-win"><td>Sep 1</td><td class="text-left">Spinaway Stakes</td><td>G1</td><td>Saratoga</td><td>7 FD</td><td><b>Win</b></td><td>$120,000</td><td class="text-left">1 length over Stormy Pick</td></tr>
+        <tr class="race-second"><td>Oct 14</td><td class="text-left">Frizette Stakes</td><td>G1</td><td>Belmont</td><td>8½ FD</td><td><b>Second</b></td><td>$100,000</td><td class="text-left">2½ lengths behind Raging Fever</td></tr>
+        <tr class="race-win"><td>Dec 9</td><td class="text-left">What A. Pleasure Stakes</td><td>G2</td><td>Calder</td><td>8½ FD</td><td><b>Win</b></td><td>$60,000</td><td class="text-left">7 lengths over Radical Riley</td></tr>
+        <tr><td colspan="8" class="race-subtotal">2000 Subtotal: 7 Starts — 5 Wins, 2 Seconds &nbsp;|&nbsp; $480,950</td></tr>
+
+        <!-- 2001赛季 -->
+        <tr>
+            <td colspan="8" class="race-section-header">▶ 2001 Season — 8 Starts: 4-1-1-2 &nbsp;|&nbsp; Earnings: $645,980</td>
+        </tr>
+        <tr style="background-color:#d5d5d5; font-weight:bold; font-size:7.5pt;">
+            <td>Date</td><td>Race</td><td>Grade</td><td>Track</td><td>Dist.</td><td>Finish</td><td>Earnings</td><td>Margin / Notes</td>
+        </tr>
+        <tr class="race-second"><td>Jan 28</td><td class="text-left">Forward Gal Stakes</td><td>G3</td><td>Gulfstream</td><td>7 FD</td><td><b>Second</b></td><td>$30,000</td><td class="text-left">2½ lengths behind Gold Mover</td></tr>
+        <tr class="race-other"><td>Feb 25</td><td class="text-left">Davona Dale Stakes</td><td>G3</td><td>Gulfstream</td><td>8½ FD</td><td><b>Fourth</b></td><td>$9,000</td><td class="text-left">4 lengths behind winner Latour</td></tr>
+        <tr class="race-win"><td>Apr 13</td><td class="text-left">Comely Stakes</td><td>G3</td><td>Aqueduct</td><td>8 FD</td><td><b>Win</b></td><td>$66,060</td><td class="text-left">Promoted from 2nd; Mandy's Gold DQ'd</td></tr>
+        <tr class="race-third"><td>May 4</td><td class="text-left">Kentucky Oaks</td><td>G1</td><td>Churchill Downs</td><td>9 FD</td><td><b>Third</b></td><td>$60,920</td><td class="text-left">3½ lengths behind winner Flute</td></tr>
+        <tr class="race-win"><td>Jun 8</td><td class="text-left">Acorn Stakes</td><td>G1</td><td>Belmont</td><td>8 FD</td><td><b>Win</b></td><td>$120,000</td><td class="text-left">8½ lengths over Forest Secrets</td></tr>
+        <tr class="race-win"><td>Jun 30</td><td class="text-left">Mother Goose Stakes</td><td>G1</td><td>Belmont</td><td>9 FD</td><td><b>Win</b></td><td>$150,000</td><td class="text-left">14 lengths over Fleet Renee</td></tr>
+        <tr class="race-win"><td>Jul 21</td><td class="text-left">Coaching Club American Oaks</td><td>G1</td><td>Belmont</td><td>12 FD</td><td><b>Win</b></td><td>$210,000</td><td class="text-left">1½ lengths over Tweedside</td></tr>
+        <tr class="race-other"><td>Aug 25</td><td class="text-left">Travers Stakes</td><td>G1</td><td>Saratoga</td><td>10 FD</td><td><b>Eighth</b></td><td>$0</td><td class="text-left">13½ lengths behind winner Point Given</td></tr>
+        <tr class="race-note-retired"><td colspan="8">◆ Condylar fractures sustained; retired from racing.</td></tr>
+        <tr><td colspan="8" class="race-subtotal">2001 Subtotal: 8 Starts — 4 Wins, 1 Second, 1 Third, 2 Others &nbsp;|&nbsp; $645,980</td></tr>
+        <tr><td colspan="8" class="race-honors">★ Eclipse Awards: Champion Three-Year-Old Filly</td></tr>
+    </table>
+
+    <!-- 子嗣表格 -->
+    <table class="race-record-table progeny-table" border="1" cellpadding="0" cellspacing="0">
+        <tr>
+            <td colspan="4" class="race-header">Progeny of Rogue (USA)</td>
+        </tr>
+        <tr style="background-color:#d5d5d5; font-weight:bold; font-size:7.5pt;">
+            <td width="10%">Year</td><td width="35%">Name</td><td width="25%">Color / Gender</td><td width="30%">Sire</td>
+        </tr>
+        <tr class="female"><td>2007</td><td><a href="https://wisteriachestnut.github.io/Pedigree/Ravager" target="_blank">Ravager</a></td><td>Grey/Roan Mare</td><td>Day Trader</td></tr>
+        <tr class="male"><td>2008</td><td><a href="https://wisteriachestnut.github.io/Pedigree/Rigging" target="_blank">Rigging</a></td><td>Grey/Roan Horse</td><td>Day Trader</td></tr>
+        <tr class="male"><td>2009</td><td><a href="https://wisteriachestnut.github.io/Pedigree/Rascality" target="_blank">Rascality</a></td><td>Dark Bay/Brown Horse</td><td>Tricky Creek</td></tr>
+        <tr class="male"><td>2010</td><td><a href="https://wisteriachestnut.github.io/Pedigree/Reckoning" target="_blank">Reckoning</a></td><td>Dark Bay/Brown Horse</td><td>Offlee Wild</td></tr>
+        <tr class="female"><td>2012</td><td><a href="https://wisteriachestnut.github.io/Pedigree/Rampage" target="_blank">Rampage</a></td><td>Dark Bay/Brown Mare</td><td>Day Trader</td></tr>
+    </table>
+    <div style="margin-top:12px; font-size:7.5pt; font-family: Arial; text-align:center; color:#555;">
+        Rogue — foaled 1998. Dam of Ravager &amp; Rigging. Multiple graded stakes winner.
+    </div>
+</div>
 </body>
 </html>
