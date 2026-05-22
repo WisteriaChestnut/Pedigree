@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+	<link rel="shortcut icon" href="Icon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>牝系血统树状图</title>
+    <!-- html2canvas 用于导出图片 -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --bg: #f8f7f4;
+            --card-bg: #ffffff;
+            --card-female-border: #d4857b;
+            --card-male-border: #6b9ac4;
+            --card-selected-border: #c8963e;
+            --card-selected-shadow: 0 4px 20px rgba(200, 150, 62, 0.25);
+            --card-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+            --card-hover-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+            --tree-line: #c5bfb6;
+            --text-primary: #2c2416;
+            --text-secondary: #6b5e4a;
+            --text-muted: #9b8d7a;
+            --accent: #8b6f4e;
+            --accent-light: #f0e8db;
+            --female-tag: #f2e0dd;
+            --female-text: #a0524a;
+            --male-tag: #dce8f2;
+            --male-text: #3d6d94;
+            --btn-bg: #5a4a3a;
+            --btn-hover: #3d3026;
+            --btn-text: #fff;
+            --btn-import-bg: #4a7c6f;
+            --btn-import-hover: #365e53;
+            --btn-export-bg: #5a7d9a;
+            --btn-export-hover: #3f5c70;
+            --btn-edit-bg: #c8963e;
+            --btn-edit-hover: #a87b30;
+            --modal-overlay: rgba(0, 0, 0, 0.5);
+            --danger: #c0392b;
+            --danger-hover: #a93226;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 18px;
+            --font-stack: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', system-ui, sans-serif;
+            --transition-fast: 0.18s ease;
+            --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-stack);
+            background: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--card-bg);
+            border-bottom: 1px solid #e8e3da;
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .header-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .header-title .icon { font-size: 1.5rem; }
+        .header-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-left: 6px;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .btn-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 1.4rem;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-smooth);
+            font-family: var(--font-stack);
+            flex-shrink: 0;
+        }
+        .btn-add { background: var(--btn-bg); color: var(--btn-text); box-shadow: 0 3px 12px rgba(90,74,58,0.3); }
+        .btn-add:hover { background: var(--btn-hover); transform: scale(1.07); box-shadow: 0 6px 20px rgba(90,74,58,0.4); }
+        .btn-import { background: var(--btn-import-bg); color: #fff; box-shadow: 0 3px 12px rgba(74,124,111,0.3); font-size: 1.1rem; }
+        .btn-import:hover { background: var(--btn-import-hover); transform: scale(1.07); box-shadow: 0 6px 20px rgba(74,124,111,0.4); }
+        .btn-export { background: var(--btn-export-bg); color: #fff; box-shadow: 0 3px 12px rgba(90,125,154,0.3); }
+        .btn-export:hover { background: var(--btn-export-hover); transform: scale(1.07); box-shadow: 0 6px 20px rgba(90,125,154,0.4); }
+        .btn-icon:active { transform: scale(0.93); transition: 0.1s ease; }
+        .btn-icon .tooltip {
+            position: absolute;
+            right: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #3d3026;
+            color: #fff;
+            font-size: 0.75rem;
+            padding: 5px 12px;
+            border-radius: 18px;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+            font-weight: 500;
+        }
+        .btn-icon:hover .tooltip { opacity: 1; }
+
+        .main-container {
+            display: flex;
+            gap: 0;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px 20px 40px;
+            min-height: calc(100vh - 160px);
+        }
+        .tree-panel {
+            flex: 1 1 65%;
+            min-width: 0;
+            padding: 16px 8px 16px 16px;
+            overflow-x: auto;
+            overflow-y: visible;
+        }
+        .detail-panel {
+            flex: 0 0 360px;
+            border-left: 1px solid #e8e3da;
+            padding: 20px 22px;
+            background: var(--card-bg);
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            align-self: flex-start;
+            position: sticky;
+            top: 100px;
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            transition: all var(--transition-smooth);
+        }
+        .detail-panel .placeholder {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 40px 10px;
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+        .detail-panel .placeholder .icon-large {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 14px;
+            opacity: 0.6;
+        }
+        .detail-panel .member-detail h3 {
+            font-size: 1.2rem;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+        .detail-panel .member-detail .meta-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+        .detail-panel .member-detail .meta-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 14px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+        .meta-tag.female { background: var(--female-tag); color: var(--female-text); }
+        .meta-tag.male { background: var(--male-tag); color: var(--male-text); }
+        .detail-panel .info-section {
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid #eee;
+        }
+        .detail-panel .info-section h4 {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-weight: 600;
+        }
+        .detail-panel .info-section .ancestry-chain {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+        .ancestry-chain .chain-arrow { color: var(--text-muted); margin: 0 2px; }
+        .ancestry-chain .chain-link {
+            cursor: pointer;
+            color: var(--accent);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            transition: color var(--transition-fast);
+        }
+        .ancestry-chain .chain-link:hover { color: #5a3a20; }
+        .detail-panel .offspring-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .detail-panel .offspring-list li {
+            cursor: pointer;
+            background: var(--accent-light);
+            padding: 5px 12px;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            transition: all var(--transition-fast);
+            color: var(--accent);
+            font-weight: 500;
+        }
+        .detail-panel .offspring-list li:hover { background: #e0d3bd; transform: translateY(-1px); }
+        .detail-panel .btn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        .detail-panel .btn-delete {
+            background: transparent;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            transition: all var(--transition-fast);
+            font-weight: 500;
+        }
+        .detail-panel .btn-delete:hover { background: var(--danger); color: #fff; }
+        .detail-panel .btn-edit {
+            background: transparent;
+            border: 1px solid var(--btn-edit-bg);
+            color: var(--btn-edit-bg);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            transition: all var(--transition-fast);
+            font-weight: 500;
+        }
+        .detail-panel .btn-edit:hover { background: var(--btn-edit-bg); color: #fff; }
+        .extra-content {
+            background: #faf9f6;
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid #eae4d8;
+        }
+        .extra-content:empty::after {
+            content: '（无附加信息）';
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* 树形结构 */
+        .tree-root { list-style: none; padding: 0; margin: 0; }
+        .tree, .tree ul { list-style: none; padding: 0; margin: 0; }
+        .tree li {
+            position: relative;
+            padding-left: 28px;
+            border-left: 2px solid var(--tree-line);
+            margin-left: 16px;
+        }
+        .tree li:last-child { border-left: none; }
+        .tree li::before {
+            content: '';
+            position: absolute;
+            left: -2px;
+            top: 50%;
+            width: 24px;
+            height: 2px;
+            background: var(--tree-line);
+            border-radius: 1px;
+            transform: translateY(-50%);
+        }
+        .tree li:last-child::before {
+            left: -2px;
+            width: 22px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .tree-root>li {
+            border-left: none !important;
+            padding-left: 0 !important;
+            margin-left: 0 !important;
+        }
+        .tree-root>li::before { display: none !important; }
+        .card-wrapper {
+            display: inline-block;
+            padding: 4px 0;
+            position: relative;
+            z-index: 2;
+        }
+        .card {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--card-bg);
+            border: 2px solid #e8e3da;
+            border-radius: var(--radius-sm);
+            padding: 8px 14px;
+            cursor: pointer;
+            user-select: none;
+            transition: all var(--transition-smooth);
+            box-shadow: var(--card-shadow);
+            min-width: 160px;
+            max-width: 260px;
+            flex-wrap: wrap;
+            position: relative;
+            font-size: 0.92rem;
+        }
+        .card:hover {
+            box-shadow: var(--card-hover-shadow);
+            transform: translateY(-2px);
+            border-color: #d5cfc4;
+        }
+        .card:active { transform: scale(0.97); transition: 0.1s ease; }
+        .card.female { border-left: 4px solid var(--card-female-border); }
+        .card.male { border-left: 4px solid var(--card-male-border); }
+        .card.selected {
+            border-color: var(--card-selected-border) !important;
+            box-shadow: var(--card-selected-shadow) !important;
+            background: #fffdf7;
+            transform: translateY(-2px);
+            z-index: 5;
+        }
+        .card .card-name {
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+        }
+        .card .card-year {
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-variant-numeric: tabular-nums;
+            font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+            font-size: 0.85rem;
+        }
+        .card .card-gender {
+            font-size: 1.05rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            width: 22px;
+            text-align: center;
+        }
+        .card .card-gender.female-sym { color: var(--female-text); }
+        .card .card-gender.male-sym { color: var(--male-text); }
+        .offspring-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0ebe0;
+            color: var(--accent);
+            font-size: 0.7rem;
+            font-weight: 700;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-left: 2px;
+            flex-shrink: 0;
+        }
+        /* 卡片上的附加信息（第二行） */
+        .card-extra {
+            width: 100%;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            line-height: 1.3;
+            max-height: 2.6em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            word-break: break-word;
+            margin-top: 2px;
+        }
+
+        /* 模态框 */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--modal-overlay);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-smooth);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal {
+            background: #fff;
+            border-radius: var(--radius-lg);
+            padding: 28px 30px;
+            width: 90%;
+            max-width: 560px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+            transform: translateY(30px) scale(0.96);
+            transition: transform var(--transition-smooth);
+            position: relative;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .modal-overlay.active .modal { transform: translateY(0) scale(1); }
+        .modal.wide { max-width: 720px; }
+        .modal h2 {
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .modal .form-group { margin-bottom: 16px; }
+        .modal label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+        .modal input[type="text"],
+        .modal input[type="number"],
+        .modal select,
+        .modal textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #e0dbd1;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-family: var(--font-stack);
+            transition: border-color var(--transition-fast);
+            background: #fafaf8;
+            color: var(--text-primary);
+        }
+        .modal textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+        .modal textarea.import-area {
+            min-height: 280px;
+            font-family: 'SF Mono', 'Consolas', 'Menlo', 'Noto Sans SC', monospace;
+            font-size: 0.85rem;
+            line-height: 1.7;
+            tab-size: 4;
+            white-space: pre;
+        }
+        .modal input:focus,
+        .modal select:focus,
+        .modal textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(139,111,78,0.08);
+        }
+        .modal .gender-toggle { display: flex; gap: 10px; }
+        .modal .gender-toggle button {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e0dbd1;
+            border-radius: var(--radius-sm);
+            background: #fafaf8;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all var(--transition-fast);
+            font-family: var(--font-stack);
+        }
+        .modal .gender-toggle button.active-female {
+            border-color: var(--card-female-border);
+            background: var(--female-tag);
+            color: var(--female-text);
+        }
+        .modal .gender-toggle button.active-male {
+            border-color: var(--card-male-border);
+            background: var(--male-tag);
+            color: var(--male-text);
+        }
+        .modal .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 22px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+        .modal .btn {
+            padding: 10px 20px;
+            border-radius: 22px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.02em;
+            transition: all var(--transition-fast);
+            font-family: var(--font-stack);
+        }
+        .btn-primary { background: var(--btn-bg); color: var(--btn-text); }
+        .btn-primary:hover { background: var(--btn-hover); transform: translateY(-1px); box-shadow: 0 3px 10px rgba(90,74,58,0.3); }
+        .btn-import-submit { background: var(--btn-import-bg); color: #fff; }
+        .btn-import-submit:hover { background: var(--btn-import-hover); transform: translateY(-1px); box-shadow: 0 3px 10px rgba(74,124,111,0.35); }
+        .btn-cancel { background: transparent; color: var(--text-secondary); border: 2px solid #ddd !important; }
+        .btn-cancel:hover { background: #f5f3ef; }
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 6px;
+        }
+        .checkbox-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--btn-import-bg); cursor: pointer; }
+        .import-result {
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 0.82rem;
+            line-height: 1.5;
+            display: none;
+        }
+        .import-result.success { display: block; background: #eaf5ed; color: #2d6a3f; border: 1px solid #c3e6cb; }
+        .import-result.warning { display: block; background: #fff8e6; color: #8a6d2b; border: 1px solid #fceabb; }
+        .import-result.error { display: block; background: #fdecea; color: #a33; border: 1px solid #f5c6cb; }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+        .empty-state .icon-huge {
+            font-size: 4rem;
+            display: block;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: #3d3026;
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 24px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: all var(--transition-smooth);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            letter-spacing: 0.02em;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        @media (max-width: 900px) {
+            .main-container { flex-direction: column; padding: 12px 8px 30px; }
+            .detail-panel {
+                flex: 0 0 auto;
+                width: 100%;
+                border-left: none;
+                border-top: 1px solid #e8e3da;
+                border-radius: 0;
+                position: static;
+                max-height: none;
+                margin-top: 20px;
+                padding: 16px;
+            }
+            .tree-panel { padding: 8px 4px; }
+            .header { padding: 10px 14px; }
+            .card { padding: 8px 12px; min-width: 130px; font-size: 0.82rem; }
+            .tree li { padding-left: 20px; margin-left: 10px; }
+            .tree li::before { width: 16px; }
+            .modal { padding: 18px 16px; width: 95%; max-width: 95vw; }
+            .modal.wide { max-width: 95vw; }
+            .modal textarea.import-area { min-height: 180px; font-size: 0.75rem; }
+            .btn-icon .tooltip { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-title">
+            <span class="icon">🐴</span> 牝系血统树状图
+            <span class="header-subtitle">Dam Line</span>
+        </div>
+        <div class="header-actions">
+            <button class="btn-icon btn-import" id="btnImport" title="批量导入">
+                📥
+                <span class="tooltip">批量导入</span>
+            </button>
+			<button class="btn-icon btn-export" id="btnExportText" title="导出文本">
+				📝
+				<span class="tooltip">导出文本</span>
+			</button>
+            <button class="btn-icon btn-export" id="btnExport" title="导出图片">
+                📷
+                <span class="tooltip">导出图片</span>
+            </button>
+            <button class="btn-icon btn-add" id="btnAdd" title="添加新成员">
+                +
+                <span class="tooltip">添加成员</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="tree-panel" id="treePanel">
+            <ul class="tree-root" id="treeRoot"></ul>
+            <div class="empty-state" id="emptyState" style="display:none;">
+                <span class="icon-huge">🌳</span>
+                <p>暂无血统数据</p>
+                <p style="font-size:0.85rem;">点击 <strong>📥 批量导入</strong> 粘贴数据，或点击 <strong>+</strong> 手动添加</p>
+            </div>
+        </div>
+
+        <aside class="detail-panel" id="detailPanel">
+            <div class="placeholder" id="detailPlaceholder">
+                <span class="icon-large">👆</span>
+                <p>点击树中的<strong>卡片</strong><br>查看成员详情及附加信息</p>
+            </div>
+            <div class="member-detail" id="detailContent" style="display:none;"></div>
+        </aside>
+    </div>
+
+    <!-- 手动添加模态框 -->
+    <div class="modal-overlay" id="modalAddOverlay">
+        <div class="modal">
+            <h2>➕ 添加新成员</h2>
+            <form id="addMemberForm" autocomplete="off">
+                <div class="form-group"><label for="inputName">名字 *</label><input type="text" id="inputName" placeholder="例如：Bold Irish" required maxlength="80"></div>
+                <div class="form-group"><label for="inputYear">年份 *</label><input type="number" id="inputYear" placeholder="例如：1948" required min="1600" max="2100" step="1"></div>
+                <div class="form-group">
+                    <label>性别 *</label>
+                    <div class="gender-toggle" id="genderToggle">
+                        <button type="button" data-gender="female" class="active-female">♀ 雌性</button>
+                        <button type="button" data-gender="male">♂ 雄性</button>
+                    </div>
+                    <input type="hidden" id="inputGender" value="female">
+                </div>
+                <div class="form-group"><label for="inputDam">母亲（母名）</label><select id="inputDam"><option value="">-- 无（作为根节点） --</option></select></div>
+                <div class="form-group"><label for="inputExtra">附加信息（可选）</label><textarea id="inputExtra" placeholder="赛事成绩、冠军头衔、种公马记录等..."></textarea></div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-cancel" id="btnCancelAdd">取消</button>
+                    <button type="submit" class="btn btn-primary">确认添加</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 编辑成员模态框 -->
+    <div class="modal-overlay" id="modalEditOverlay">
+        <div class="modal">
+            <h2>✏️ 编辑成员</h2>
+            <form id="editMemberForm" autocomplete="off">
+                <input type="hidden" id="editMemberId">
+                <div class="form-group"><label for="editName">名字 *</label><input type="text" id="editName" required maxlength="80"></div>
+                <div class="form-group"><label for="editYear">年份 *</label><input type="number" id="editYear" required min="1600" max="2100" step="1"></div>
+                <div class="form-group">
+                    <label>性别 *</label>
+                    <div class="gender-toggle" id="editGenderToggle">
+                        <button type="button" data-gender="female" class="active-female">♀ 雌性</button>
+                        <button type="button" data-gender="male">♂ 雄性</button>
+                    </div>
+                    <input type="hidden" id="editGender" value="female">
+                </div>
+                <div class="form-group"><label for="editDam">母亲（母名）</label><select id="editDam"><option value="">-- 无（作为根节点） --</option></select></div>
+                <div class="form-group"><label for="editExtra">附加信息（可选）</label><textarea id="editExtra" placeholder="赛事成绩、冠军头衔、种公马记录等..."></textarea></div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-cancel" id="btnCancelEdit">取消</button>
+                    <button type="submit" class="btn btn-primary">保存修改</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 批量导入模态框 -->
+    <div class="modal-overlay" id="modalImportOverlay">
+        <div class="modal wide">
+            <h2>📥 批量导入血统数据</h2>
+            <form id="importForm" autocomplete="off">
+                <div class="form-group">
+                    <label for="importTextarea">粘贴文本（支持多种格式）</label>
+                    <textarea id="importTextarea" class="import-area" placeholder="格式说明：&#10;1. 制表符缩进格式（旧）：&#10;Bold Irish 1948 ♀&#10;	Blarney Castle 1954 ♀&#10;	｜	Blue Miracle 1958 ♀&#10;&#10;2. 空格缩进格式（日本血统表）：&#10;賢藤/ケンユウ 1926 牝 栗毛 宮内省新冠牧場生産 1946年6月15日 死亡&#10; 波藤/リヨウゴク 1933 牡 栗毛 ...&#10; ｜ 興帛/アサトモ 1940 牡 鹿毛 ...&#10;&#10;- 层级由行首空白（空格/制表符/竖线）数量决定&#10;- 性别支持：♀/♂ 或 牝/牡&#10;- 附加信息可自由填写"></textarea>
+                </div>
+                <div class="checkbox-row">
+                    <input type="checkbox" id="chkReplace">
+                    <label for="chkReplace" style="cursor:pointer;text-transform:none;letter-spacing:0;font-weight:500;">替换现有数据（默认追加模式）</label>
+                </div>
+                <div class="import-result" id="importResult"></div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-cancel" id="btnCancelImport">取消</button>
+                    <button type="submit" class="btn btn-import-submit">执行导入</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        (function() {
+            // ==================== 数据层 ====================
+            let members = [];
+            let nextId = 1;
+            let selectedMemberId = null;
+
+            const presetData = [
+                { id: 1, name: 'Bold Irish', year: 1948, gender: 'female', damId: null, extra: 'Reine-de-Course' },
+                { id: 2, name: 'Blarney Castle', year: 1954, gender: 'female', damId: 1, extra: '' },
+                { id: 3, name: 'Blue Miracle', year: 1958, gender: 'female', damId: 2, extra: '1着 1960 未勝利戦' },
+                { id: 4, name: 'Miss Open Wiew', year: 1963, gender: 'female', damId: 3, extra: '' },
+                { id: 5, name: 'C Mckee', year: 1968, gender: 'male', damId: 4, extra: '' },
+            ];
+
+            function initData() {
+                members = JSON.parse(JSON.stringify(presetData));
+                nextId = Math.max(...members.map(m => m.id), 0) + 1;
+            }
+
+            function getMemberById(id) { return members.find(m => m.id === id); }
+            function getChildrenOf(damId) {
+                return members.filter(m => m.damId === damId).sort((a, b) => a.year - b.year || a.id - b.id);
+            }
+            function getRootMembers() {
+                return members.filter(m => m.damId === null).sort((a, b) => a.year - b.year || a.id - b.id);
+            }
+            function getFemaleMembers() {
+                return members.filter(m => m.gender === 'female').sort((a, b) => a.name.localeCompare(b.name));
+            }
+            function getAncestryChain(member) {
+                const chain = [];
+                let current = member;
+                const visited = new Set();
+                while (current && current.damId && !visited.has(current.id)) {
+                    visited.add(current.id);
+                    const dam = getMemberById(current.damId);
+                    if (dam) { chain.unshift(dam); current = dam; } else break;
+                }
+                return chain;
+            }
+            function addMember(name, year, gender, damId, extra = '') {
+                const newMember = {
+                    id: nextId++,
+                    name: name.trim(),
+                    year: parseInt(year, 10),
+                    gender: gender,
+                    damId: damId || null,
+                    extra: extra.trim()
+                };
+                members.push(newMember);
+                return newMember;
+            }
+            function deleteMember(id) {
+                const toDelete = new Set();
+                function collectDescendants(memberId) {
+                    toDelete.add(memberId);
+                    getChildrenOf(memberId).forEach(child => collectDescendants(child.id));
+                }
+                collectDescendants(id);
+                members = members.filter(m => !toDelete.has(m.id));
+                if (selectedMemberId && toDelete.has(selectedMemberId)) selectedMemberId = null;
+                return toDelete.size;
+            }
+            function getDescendantCount(id) {
+                let count = 1;
+                getChildrenOf(id).forEach(c => count += getDescendantCount(c.id));
+                return count;
+            }
+            function getDescendantIds(memberId) {
+                const ids = new Set();
+                function collect(id) { ids.add(id); getChildrenOf(id).forEach(child => collect(child.id)); }
+                collect(memberId);
+                return ids;
+            }
+            function updateMember(id, { name, year, gender, damId, extra }) {
+                const member = getMemberById(id);
+                if (!member) return false;
+                const oldGender = member.gender;
+                member.name = name.trim();
+                member.year = parseInt(year, 10);
+                member.gender = gender;
+                member.extra = extra.trim();
+                if (oldGender === 'female' && gender === 'male') {
+                    const children = getChildrenOf(id);
+                    if (children.length > 0) {
+                        children.forEach(child => { child.damId = null; });
+                    }
+                }
+                if (damId && damId !== id) {
+                    const dam = getMemberById(damId);
+                    if (dam && dam.gender === 'female') member.damId = damId;
+                    else member.damId = null;
+                } else {
+                    member.damId = null;
+                }
+                return true;
+            }
+
+            // ==================== 导入解析 ====================
+            function calcDepth(rawLine) {
+                let depth = 0, i = 0;
+                const len = rawLine.length;
+                while (i < len) {
+                    const ch = rawLine[i];
+                    if (ch === '\t') { depth++; i++; }
+                    else if (ch === '｜' || ch === '|') { depth++; i++; }
+                    else if (ch === ' ' || ch === '　') {
+                        let spaceCount = 0;
+                        while (i < len && (rawLine[i] === ' ' || rawLine[i] === '　')) { spaceCount++; i++; }
+                        depth += Math.max(1, Math.floor(spaceCount / 2));
+                    } else break;
+                }
+                return { depth, contentStart: i };
+            }
+
+            function parseImportText(text) {
+                const lines = text.split(/\r?\n/);
+                const parsedMembers = [];
+                const errors = [];
+                const lastFemaleAtDepth = [];
+                for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
+                    const rawLine = lines[lineIdx];
+                    const { depth, contentStart } = calcDepth(rawLine);
+                    const content = rawLine.substring(contentStart).trim();
+                    if (!content) continue;
+                    let match = content.match(/^(.+?)\s+(\d{4})\s+(♀|♂)\s*(?:【(.*)】)?\s*$/);
+                    if (match) {
+                        const name = match[1].trim();
+                        const year = parseInt(match[2], 10);
+                        const gender = match[3] === '♀' ? 'female' : 'male';
+                        const extra = (match[4] || '').trim();
+                        if (!name) { errors.push(`第${lineIdx+1}行：名字为空`); continue; }
+                        if (year < 1600 || year > 2100) { errors.push(`第${lineIdx+1}行：年份异常`); continue; }
+                        let damId = null;
+                        if (depth > 0) {
+                            for (let d = depth - 1; d >= 0; d--) {
+                                if (lastFemaleAtDepth[d] !== undefined) { damId = lastFemaleAtDepth[d]; break; }
+                            }
+                        }
+                        const newMember = { id: nextId++, name, year, gender, damId, extra };
+                        parsedMembers.push(newMember);
+                        if (gender === 'female') {
+                            lastFemaleAtDepth[depth] = newMember.id;
+                            for (let d = depth + 1; d < lastFemaleAtDepth.length; d++) delete lastFemaleAtDepth[d];
+                        }
+                        continue;
+                    }
+                    match = content.match(/^(.+?)\s+(\d{4})\s+(牝|牡|♀|♂)\s+(.*)$/);
+                    if (match) {
+                        const name = match[1].trim();
+                        const year = parseInt(match[2], 10);
+                        const genderSymbol = match[3];
+                        let gender = (genderSymbol === '牝' || genderSymbol === '♀') ? 'female' : 'male';
+                        const extra = match[4].trim();
+                        if (!name) { errors.push(`第${lineIdx+1}行：名字为空`); continue; }
+                        if (year < 1600 || year > 2100) { errors.push(`第${lineIdx+1}行：年份异常`); continue; }
+                        let damId = null;
+                        if (depth > 0) {
+                            for (let d = depth - 1; d >= 0; d--) {
+                                if (lastFemaleAtDepth[d] !== undefined) { damId = lastFemaleAtDepth[d]; break; }
+                            }
+                        }
+                        const newMember = { id: nextId++, name, year, gender, damId, extra };
+                        parsedMembers.push(newMember);
+                        if (gender === 'female') {
+                            lastFemaleAtDepth[depth] = newMember.id;
+                            for (let d = depth + 1; d < lastFemaleAtDepth.length; d++) delete lastFemaleAtDepth[d];
+                        }
+                        continue;
+                    }
+                    errors.push(`第${lineIdx+1}行：格式无法识别`);
+                }
+                return { parsedMembers, errors };
+            }
+
+            function handleImport(text, replaceExisting) {
+                const { parsedMembers, errors } = parseImportText(text);
+                if (parsedMembers.length === 0 && errors.length === 0) {
+                    importResult.className = 'import-result warning';
+                    importResult.style.display = 'block';
+                    importResult.textContent = '⚠️ 未检测到有效数据行。';
+                    return;
+                }
+                if (replaceExisting) { members = []; nextId = 1; selectedMemberId = null; }
+                const savedNextId = nextId;
+                const reParsed = parseImportText(text);
+                const finalMembers = reParsed.parsedMembers;
+                const finalErrors = reParsed.errors;
+                nextId = savedNextId;
+                const idRemap = {};
+                finalMembers.forEach(m => { const oldId = m.id; const newId = nextId++; idRemap[oldId] = newId; m.id = newId; });
+                finalMembers.forEach(m => { if (m.damId && idRemap[m.damId]) m.damId = idRemap[m.damId]; });
+                members.push(...finalMembers);
+                const totalImported = finalMembers.length;
+                const errorCount = finalErrors.length;
+                if (errorCount > 0) {
+                    importResult.className = 'import-result warning';
+                    importResult.style.display = 'block';
+                    importResult.textContent = `✅ 成功导入 ${totalImported} 个成员。⚠️ ${errorCount} 行无法解析。`;
+                } else {
+                    importResult.className = 'import-result success';
+                    importResult.style.display = 'block';
+                    importResult.textContent = `✅ 成功导入 ${totalImported} 个成员！`;
+                }
+                renderTree();
+                updateDetailPanel();
+                updateDamSelect();
+                showToast(`📥 已导入 ${totalImported} 个成员`);
+            }
+
+            // ==================== DOM引用 ====================
+            const treeRoot = document.getElementById('treeRoot');
+            const emptyState = document.getElementById('emptyState');
+            const detailPlaceholder = document.getElementById('detailPlaceholder');
+            const detailContent = document.getElementById('detailContent');
+            const modalAddOverlay = document.getElementById('modalAddOverlay');
+            const modalEditOverlay = document.getElementById('modalEditOverlay');
+            const modalImportOverlay = document.getElementById('modalImportOverlay');
+            const addMemberForm = document.getElementById('addMemberForm');
+            const editMemberForm = document.getElementById('editMemberForm');
+            const importForm = document.getElementById('importForm');
+            const inputName = document.getElementById('inputName');
+            const inputYear = document.getElementById('inputYear');
+            const inputGender = document.getElementById('inputGender');
+            const inputDam = document.getElementById('inputDam');
+            const inputExtra = document.getElementById('inputExtra');
+            const genderToggle = document.getElementById('genderToggle');
+            const editMemberId = document.getElementById('editMemberId');
+            const editName = document.getElementById('editName');
+            const editYear = document.getElementById('editYear');
+            const editGender = document.getElementById('editGender');
+            const editDam = document.getElementById('editDam');
+            const editExtra = document.getElementById('editExtra');
+            const editGenderToggle = document.getElementById('editGenderToggle');
+            const importTextarea = document.getElementById('importTextarea');
+            const importResult = document.getElementById('importResult');
+            const chkReplace = document.getElementById('chkReplace');
+            const btnAdd = document.getElementById('btnAdd');
+            const btnImport = document.getElementById('btnImport');
+            const btnExport = document.getElementById('btnExport');
+			const btnExportText = document.getElementById('btnExportText');
+            const btnCancelAdd = document.getElementById('btnCancelAdd');
+            const btnCancelEdit = document.getElementById('btnCancelEdit');
+            const btnCancelImport = document.getElementById('btnCancelImport');
+            const toast = document.getElementById('toast');
+
+            let toastTimer;
+            function showToast(message, duration = 2200) {
+                clearTimeout(toastTimer);
+                toast.textContent = message;
+                toast.classList.add('show');
+                toastTimer = setTimeout(() => toast.classList.remove('show'), duration);
+            }
+
+            function escapeHTML(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            // ==================== 渲染 ====================
+            function buildTreeHTML(damId, isRoot = true) {
+                const children = getChildrenOf(damId);
+                if (children.length === 0) return '';
+                let html = '<ul class="' + (isRoot ? 'tree-root' : 'tree') + '">';
+                children.forEach(child => {
+                    const offspringCount = getChildrenOf(child.id).length;
+                    const hasOffspring = offspringCount > 0;
+                    const genderClass = child.gender === 'female' ? 'female' : 'male';
+                    const genderSym = child.gender === 'female' ? '♀' : '♂';
+                    const genderSymClass = child.gender === 'female' ? 'female-sym' : 'male-sym';
+                    const isSelected = child.id === selectedMemberId;
+                    const selectedClass = isSelected ? ' selected' : '';
+                    const offspringBadge = hasOffspring && child.gender === 'female' ?
+                        `<span class="offspring-count" title="${offspringCount}个后代">${offspringCount}</span>` : '';
+                    const extraHtml = child.extra ? `<span class="card-extra">${escapeHTML(child.extra)}</span>` : '';
+                    html += '<li>';
+                    html += `<div class="card-wrapper"><div class="card ${genderClass}${selectedClass}" data-member-id="${child.id}" title="${escapeHTML(child.extra || child.name)}">`;
+                    html += `<span class="card-name">${escapeHTML(child.name)}</span>`;
+                    html += `<span class="card-year">${child.year}</span>`;
+                    html += `<span class="card-gender ${genderSymClass}">${genderSym}</span>`;
+                    html += offspringBadge;
+                    html += extraHtml;
+                    html += '</div></div>';
+                    html += buildTreeHTML(child.id, false);
+                    html += '</li>';
+                });
+                html += '</ul>';
+                return html;
+            }
+
+            function renderTree() {
+                treeRoot.innerHTML = '';
+                const roots = getRootMembers();
+                if (roots.length === 0) {
+                    emptyState.style.display = 'block';
+                    treeRoot.style.display = 'none';
+                } else {
+                    emptyState.style.display = 'none';
+                    treeRoot.style.display = 'block';
+                    let html = '<ul class="tree-root">';
+                    roots.forEach(root => {
+                        const offspringCount = getChildrenOf(root.id).length;
+                        const hasOffspring = offspringCount > 0;
+                        const genderClass = root.gender === 'female' ? 'female' : 'male';
+                        const genderSym = root.gender === 'female' ? '♀' : '♂';
+                        const genderSymClass = root.gender === 'female' ? 'female-sym' : 'male-sym';
+                        const isSelected = root.id === selectedMemberId;
+                        const selectedClass = isSelected ? ' selected' : '';
+                        const offspringBadge = hasOffspring && root.gender === 'female' ?
+                            `<span class="offspring-count" title="${offspringCount}个后代">${offspringCount}</span>` : '';
+                        const extraHtml = root.extra ? `<span class="card-extra">${escapeHTML(root.extra)}</span>` : '';
+                        html += '<li>';
+                        html += `<div class="card-wrapper"><div class="card ${genderClass}${selectedClass}" data-member-id="${root.id}" title="${escapeHTML(root.extra || root.name)}">`;
+                        html += `<span class="card-name">${escapeHTML(root.name)}</span>`;
+                        html += `<span class="card-year">${root.year}</span>`;
+                        html += `<span class="card-gender ${genderSymClass}">${genderSym}</span>`;
+                        html += offspringBadge;
+                        html += extraHtml;
+                        html += '</div></div>';
+                        html += buildTreeHTML(root.id, false);
+                        html += '</li>';
+                    });
+                    html += '</ul>';
+                    treeRoot.innerHTML = html;
+                }
+                bindCardEvents();
+                updateDetailPanel();
+                updateDamSelect();
+                updateEditDamSelect();
+            }
+
+            function bindCardEvents() {
+                document.querySelectorAll('.card[data-member-id]').forEach(card => {
+                    card.addEventListener('click', function(e) {
+                        const memberId = parseInt(this.getAttribute('data-member-id'), 10);
+                        selectMember(memberId);
+                    });
+                });
+            }
+
+            function selectMember(memberId) {
+                if (selectedMemberId === memberId) { selectedMemberId = null; } else { selectedMemberId = memberId; }
+                document.querySelectorAll('.card[data-member-id]').forEach(card => {
+                    const id = parseInt(card.getAttribute('data-member-id'), 10);
+                    card.classList.toggle('selected', id === selectedMemberId);
+                });
+                updateDetailPanel();
+            }
+
+            function scrollToCard(memberId) {
+                const card = document.querySelector(`.card[data-member-id="${memberId}"]`);
+                if (card) {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    card.style.transition = '0.15s ease';
+                    card.style.boxShadow = '0 0 0 6px rgba(200,150,62,0.5)';
+                    setTimeout(() => { card.style.boxShadow = ''; }, 800);
+                }
+            }
+
+            function updateDetailPanel() {
+                if (!selectedMemberId) {
+                    detailPlaceholder.style.display = 'block';
+                    detailContent.style.display = 'none';
+                    return;
+                }
+                const member = getMemberById(selectedMemberId);
+                if (!member) {
+                    detailPlaceholder.style.display = 'block';
+                    detailContent.style.display = 'none';
+                    selectedMemberId = null;
+                    return;
+                }
+                detailPlaceholder.style.display = 'none';
+                detailContent.style.display = 'block';
+                const dam = member.damId ? getMemberById(member.damId) : null;
+                const children = getChildrenOf(member.id);
+                const ancestry = getAncestryChain(member);
+                const genderLabel = member.gender === 'female' ? '♀ 雌性' : '♂ 雄性';
+                const genderTagClass = member.gender === 'female' ? 'female' : 'male';
+                let ancestryHTML = '';
+                if (ancestry.length > 0) {
+                    const parts = ancestry.map(a => `<span class="chain-link" data-nav-id="${a.id}">${escapeHTML(a.name)}</span>`);
+                    ancestryHTML = parts.join('<span class="chain-arrow"> → </span>');
+                    ancestryHTML += `<span class="chain-arrow"> → </span><strong>${escapeHTML(member.name)}</strong>`;
+                } else if (dam) {
+                    ancestryHTML = `<span class="chain-link" data-nav-id="${dam.id}">${escapeHTML(dam.name)}</span><span class="chain-arrow"> → </span><strong>${escapeHTML(member.name)}</strong>`;
+                } else {
+                    ancestryHTML = `<strong>${escapeHTML(member.name)}</strong>（根节点）`;
+                }
+                let offspringHTML = '';
+                if (children.length > 0) {
+                    offspringHTML = '<ul class="offspring-list">';
+                    children.forEach(c => {
+                        offspringHTML += `<li data-nav-id="${c.id}">${escapeHTML(c.name)} (${c.year}) ${c.gender==='female'?'♀':'♂'}</li>`;
+                    });
+                    offspringHTML += '</ul>';
+                } else {
+                    offspringHTML = '<p style="color:#9b8d7a;font-size:0.82rem;">暂无后代记录</p>';
+                }
+                detailContent.innerHTML = `
+                    <h3>${escapeHTML(member.name)}</h3>
+                    <div class="meta-row"><span class="meta-tag ${genderTagClass}">${genderLabel}</span><span style="color:var(--text-secondary);font-size:0.9rem;">📅 ${member.year}</span></div>
+                    <div class="info-section"><h4>📋 附加信息</h4><div class="extra-content">${escapeHTML(member.extra||'')||'（无附加信息）'}</div></div>
+                    <div class="info-section"><h4>🧬 牝系祖先链</h4><div class="ancestry-chain">${ancestryHTML}</div></div>
+                    <div class="info-section"><h4>🐣 后代 (${children.length})</h4>${offspringHTML}</div>
+                    <div class="info-section"><h4>🐎 母亲</h4><p style="font-size:0.85rem;color:var(--text-secondary);">${dam?`<span class="chain-link" data-nav-id="${dam.id}">${escapeHTML(dam.name)} (${dam.year}) ♀</span>`:'<em style="color:#9b8d7a;">无（根节点）</em>'}</p></div>
+                    <div class="btn-group">
+                        <button class="btn-edit" id="btnEditMember">✏️ 编辑成员</button>
+                        <button class="btn-delete" id="btnDeleteMember">🗑 删除此成员及其所有后代</button>
+                    </div>
+                `;
+                document.getElementById('btnEditMember').addEventListener('click', () => openEditModal(member));
+                document.getElementById('btnDeleteMember').addEventListener('click', () => handleDeleteMember(member));
+                detailContent.querySelectorAll('.chain-link[data-nav-id], .offspring-list li[data-nav-id]').forEach(el => {
+                    el.addEventListener('click', function() {
+                        const navId = parseInt(this.getAttribute('data-nav-id'), 10);
+                        selectMember(navId);
+                        scrollToCard(navId);
+                    });
+                });
+            }
+
+            function handleDeleteMember(member) {
+                const count = getDescendantCount(member.id);
+                const msg = count > 1 ? `确定删除「${member.name}」及其 ${count} 个后代？` : `确定删除「${member.name}」？`;
+                if (confirm(msg)) {
+                    const deleted = deleteMember(member.id);
+                    selectedMemberId = null;
+                    renderTree();
+                    showToast(`已删除 ${deleted} 个成员`);
+                }
+            }
+
+            // ==================== 编辑模态框 ====================
+            function openEditModal(member) {
+                editMemberId.value = member.id;
+                editName.value = member.name;
+                editYear.value = member.year;
+                editExtra.value = member.extra || '';
+                editGender.value = member.gender;
+                updateEditGenderToggleUI();
+                updateEditDamSelect(member.id);
+                if (member.damId) {
+                    const option = editDam.querySelector(`option[value="${member.damId}"]`);
+                    if (option) option.selected = true;
+                } else editDam.value = '';
+                modalEditOverlay.classList.add('active');
+                setTimeout(() => editName.focus(), 300);
+            }
+
+            function closeEditModal() { modalEditOverlay.classList.remove('active'); editMemberForm.reset(); }
+
+            function updateEditDamSelect(excludeId) {
+                const females = getFemaleMembers();
+                const excludeIds = excludeId ? getDescendantIds(excludeId) : new Set();
+                excludeIds.add(excludeId);
+                editDam.innerHTML = '<option value="">-- 无（作为根节点） --</option>';
+                females.forEach(f => {
+                    if (!excludeIds.has(f.id)) {
+                        const option = document.createElement('option');
+                        option.value = f.id;
+                        option.textContent = `${f.name} (${f.year}) ♀`;
+                        editDam.appendChild(option);
+                    }
+                });
+            }
+
+            function updateEditGenderToggleUI() {
+                editGenderToggle.querySelectorAll('button').forEach(btn => {
+                    btn.classList.remove('active-female', 'active-male');
+                    if (btn.getAttribute('data-gender') === editGender.value) {
+                        btn.classList.add(editGender.value === 'female' ? 'active-female' : 'active-male');
+                    }
+                });
+            }
+
+            editGenderToggle.addEventListener('click', function(e) {
+                const btn = e.target.closest('button[data-gender]');
+                if (!btn) return;
+                editGender.value = btn.getAttribute('data-gender');
+                updateEditGenderToggleUI();
+            });
+
+            editMemberForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const id = parseInt(editMemberId.value, 10);
+                const member = getMemberById(id);
+                if (!member) return;
+                const name = editName.value.trim();
+                const year = parseInt(editYear.value, 10);
+                const gender = editGender.value;
+                const damIdRaw = editDam.value;
+                const damId = damIdRaw ? parseInt(damIdRaw, 10) : null;
+                const extra = editExtra.value.trim();
+                if (!name) { showToast('请输入名字'); return; }
+                if (!year || year < 1600 || year > 2100) { showToast('请输入有效年份'); return; }
+                if (damId && !getMemberById(damId)) { showToast('所选母亲不存在'); return; }
+                if (damId === id) { showToast('母亲不能是自己'); return; }
+                if (member.gender === 'female' && gender === 'male' && getChildrenOf(id).length > 0) {
+                    if (!confirm('该雌性成员有后代，改为雄性将导致后代失去母亲，确定吗？')) return;
+                }
+                updateMember(id, { name, year, gender, damId, extra });
+                closeEditModal();
+                renderTree();
+                updateDetailPanel();
+                showToast(`✅ 已更新：${name}`);
+            });
+
+            btnCancelEdit.addEventListener('click', closeEditModal);
+            modalEditOverlay.addEventListener('click', function(e) { if (e.target === modalEditOverlay) closeEditModal(); });
+
+            // ==================== 添加模态框 ====================
+            function openAddModal() {
+                updateDamSelect();
+                addMemberForm.reset();
+                inputGender.value = 'female';
+                updateGenderToggleUI();
+                inputYear.value = new Date().getFullYear();
+                inputExtra.value = '';
+                modalAddOverlay.classList.add('active');
+                setTimeout(() => inputName.focus(), 300);
+            }
+            function closeAddModal() { modalAddOverlay.classList.remove('active'); addMemberForm.reset(); }
+            function updateDamSelect() {
+                const females = getFemaleMembers();
+                inputDam.innerHTML = '<option value="">-- 无（作为根节点） --</option>';
+                females.forEach(f => {
+                    const option = document.createElement('option');
+                    option.value = f.id;
+                    option.textContent = `${f.name} (${f.year}) ♀`;
+                    inputDam.appendChild(option);
+                });
+            }
+            function updateGenderToggleUI() {
+                genderToggle.querySelectorAll('button').forEach(btn => {
+                    btn.classList.remove('active-female', 'active-male');
+                    if (btn.getAttribute('data-gender') === inputGender.value) {
+                        btn.classList.add(inputGender.value === 'female' ? 'active-female' : 'active-male');
+                    }
+                });
+            }
+
+            // ==================== 导入模态框 ====================
+            function openImportModal() {
+                importTextarea.value = '';
+                importResult.className = 'import-result';
+                importResult.style.display = 'none';
+                chkReplace.checked = false;
+                modalImportOverlay.classList.add('active');
+                setTimeout(() => importTextarea.focus(), 300);
+            }
+            function closeImportModal() {
+                modalImportOverlay.classList.remove('active');
+                importTextarea.value = '';
+                importResult.className = 'import-result';
+                importResult.style.display = 'none';
+            }
+
+	// ==================== 导出文本 ====================
+	function buildTextTree(memberId, depth = 0) {
+		const member = getMemberById(memberId);
+		if (!member) return [];
+
+		const indent = depth === 0
+			? ''
+			: '\t' + '｜\t'.repeat(Math.max(0, depth - 1));
+
+		const genderSym = member.gender === 'female' ? '♀' : '♂';
+
+		let line = `${indent}${member.name} ${member.year} ${genderSym}`;
+
+		if (member.extra && member.extra.trim()) {
+			line += ` 【${member.extra.trim()}】`;
+		}
+
+		const lines = [line];
+
+		const children = getChildrenOf(member.id);
+
+		children.forEach(child => {
+			lines.push(...buildTextTree(child.id, depth + 1));
+		});
+
+		return lines;
+	}
+
+	function exportAsText() {
+		if (members.length === 0) {
+			showToast('没有数据可导出');
+			return;
+		}
+
+		const roots = getRootMembers();
+
+		let result = [];
+
+		roots.forEach(root => {
+			result.push(...buildTextTree(root.id, 0));
+		});
+
+		const finalText = result.join('\n');
+
+		const blob = new Blob([finalText], {
+			type: 'text/plain;charset=utf-8'
+		});
+
+		const url = URL.createObjectURL(blob);
+
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = `血统树_${new Date().toISOString().slice(0,10)}.txt`;
+		a.click();
+
+		URL.revokeObjectURL(url);
+
+		showToast('文本已导出');
+	}
+
+	// ==================== 导出图片 ====================
+	function exportAsImage() {
+		const element = document.getElementById('treePanel');
+		if (!element || members.length === 0) {
+			showToast('没有数据可导出');
+			return;
+		}
+		showToast('正在生成图片...');
+		html2canvas(element, {
+			allowTaint: true,
+			useCORS: true,
+			backgroundColor: '#f8f7f4',
+			scale: 2,
+			scrollX: 0,
+			scrollY: -window.scrollY,
+		}).then(canvas => {
+			canvas.toBlob(blob => {
+				const url = URL.createObjectURL(blob);
+				const a = document.createElement('a');
+				a.href = url;
+				a.download = `血统树_${new Date().toISOString().slice(0,10)}.png`;
+				a.click();
+				URL.revokeObjectURL(url);
+				showToast('图片已导出');
+			}, 'image/png');
+		}).catch(err => {
+			console.error(err);
+			showToast('导出失败，请重试');
+		});
+	}
+
+            // ==================== 事件绑定 ====================
+            btnAdd.addEventListener('click', openAddModal);
+            btnImport.addEventListener('click', openImportModal);
+			btnExport.addEventListener('click', exportAsImage);
+			btnExportText.addEventListener('click', exportAsText);
+            btnCancelAdd.addEventListener('click', closeAddModal);
+            btnCancelImport.addEventListener('click', closeImportModal);
+            modalAddOverlay.addEventListener('click', function(e) { if (e.target === modalAddOverlay) closeAddModal(); });
+            modalImportOverlay.addEventListener('click', function(e) { if (e.target === modalImportOverlay) closeImportModal(); });
+
+            genderToggle.addEventListener('click', function(e) {
+                const btn = e.target.closest('button[data-gender]');
+                if (!btn) return;
+                inputGender.value = btn.getAttribute('data-gender');
+                updateGenderToggleUI();
+            });
+
+            addMemberForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = inputName.value.trim();
+                const year = parseInt(inputYear.value, 10);
+                const gender = inputGender.value;
+                const damIdRaw = inputDam.value;
+                const damId = damIdRaw ? parseInt(damIdRaw, 10) : null;
+                const extra = inputExtra.value.trim();
+                if (!name) { showToast('请输入名字'); return; }
+                if (!year || year < 1600 || year > 2100) { showToast('请输入有效年份'); return; }
+                if (damId && !getMemberById(damId)) { showToast('所选母亲不存在'); return; }
+                const newMember = addMember(name, year, gender, damId, extra);
+                closeAddModal();
+                selectedMemberId = newMember.id;
+                renderTree();
+                updateDetailPanel();
+                setTimeout(() => scrollToCard(newMember.id), 200);
+                showToast(`✅ 已添加：${newMember.name} (${newMember.year})`);
+            });
+
+            importForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const text = importTextarea.value;
+                if (!text.trim()) {
+                    importResult.className = 'import-result error';
+                    importResult.style.display = 'block';
+                    importResult.textContent = '❌ 请粘贴文本后再导入。';
+                    return;
+                }
+                handleImport(text, chkReplace.checked);
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    if (modalAddOverlay.classList.contains('active')) closeAddModal();
+                    if (modalEditOverlay.classList.contains('active')) closeEditModal();
+                    if (modalImportOverlay.classList.contains('active')) closeImportModal();
+                }
+            });
+
+            document.getElementById('treePanel').addEventListener('click', function(e) {
+                if (!e.target.closest('.card') && !e.target.closest('.detail-panel') && !e.target.closest('.modal-overlay') && e.target.closest('#treePanel')) {
+                    if (selectedMemberId) {
+                        selectedMemberId = null;
+                        document.querySelectorAll('.card.selected').forEach(c => c.classList.remove('selected'));
+                        updateDetailPanel();
+                    }
+                }
+            });
+
+            // ==================== 初始化 ====================
+            function init() {
+                initData();
+                renderTree();
+                updateDetailPanel();
+                updateDamSelect();
+                console.log('🐴 牝系血统树状图已就绪');
+            }
+
+            init();
+
+            window.damLineAPI = {
+                getMembers: () => members,
+                getSelectedId: () => selectedMemberId,
+                selectMember, renderTree, updateDetailPanel,
+                updateMember, openEditModal, exportAsImage,
+            };
+        })();
+    </script>
+</body>
+</html>
