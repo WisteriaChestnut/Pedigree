@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Riot (USA) Pedigree</title>
+    <style>
+        .male {
+            background-color: #ccccff;
+            color: #0000ff;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 7.0pt;
+            text-align: center;
+            vertical-align: middle;
+            border-collapse: collapse;
+            border: 1px solid #000000;
+        }
+        .female {
+            background-color: #ffcccc;
+            color: #0000ff;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 7.0pt;
+            text-align: center;
+            vertical-align: middle;
+            border-collapse: collapse;
+            border: 1px solid #000000;
+        }
+
+        /* 近交重复祖先特殊背景色 */
+        .dup-boldruler { background: linear-gradient(135deg, #ffd700, #ffb300); color: #000; font-weight: bold; border: 2px solid #cc8800; }
+        .dup-nasrullah { background: linear-gradient(135deg, #a8e6cf, #56c596); color: #000; font-weight: bold; border: 2px solid #1e7a4f; }
+        .dup-missdisco { background: linear-gradient(135deg, #f8c8dc, #e891b9); color: #000; font-weight: bold; border: 2px solid #b34d7a; }
+        .dup-nearco { background: linear-gradient(135deg, #dda0dd, #ba55d3); color: #000; font-weight: bold; border: 2px solid #7a2f8f; }
+        .dup-mumtazbegum { background: linear-gradient(135deg, #e8d5b7, #c9a87c); color: #000; font-weight: bold; border: 2px solid #8b6f47; }
+        .dup-discovery { background: linear-gradient(135deg, #ffcc99, #ff9966); color: #000; font-weight: bold; border: 2px solid #cc5500; }
+        .dup-outdone { background: linear-gradient(135deg, #d5c4e0, #a68cc4); color: #000; font-weight: bold; border: 2px solid #5c3d7a; }
+        .dup-blenheim { background: linear-gradient(135deg, #c2e0f0, #87b8d9); color: #000; font-weight: bold; border: 2px solid #2c6e9e; }
+        .dup-sirgallahad { background: linear-gradient(135deg, #f4cccc, #e06666); color: #000; font-weight: bold; border: 2px solid #990000; }
+        .dup-mumtazmahal { background: linear-gradient(135deg, #f0e68c, #daa520); color: #000; font-weight: bold; border: 2px solid #b8860b; }
+        .dup-lachica { background: linear-gradient(135deg, #b6d7a8, #6aa84f); color: #000; font-weight: bold; border: 2px solid #274e13; }
+
+        .inbreed-summary {
+            margin-top: 10px;
+            padding: 8px;
+            border: 1px solid #000;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 9pt;
+            background: #f7f7f7;
+            line-height: 1.8;
+        }
+        .inbreed-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            margin: 2px;
+            border-radius: 4px;
+            font-weight: bold;
+            border: 1px solid #333;
+        }
+
+        .race-record-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 18px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 8.5pt;
+        }
+        .race-record-table td, .race-record-table th {
+            border: 1px solid #aaa;
+            padding: 6px 4px;
+            vertical-align: top;
+        }
+        .race-header {
+            background-color: #2c3e50;
+            color: white;
+            font-weight: bold;
+            font-size: 11pt;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        .race-section-header {
+            background-color: #e8eef2;
+            font-weight: bold;
+            font-size: 9.5pt;
+            text-align: left;
+            padding: 6px;
+            border-bottom: 2px solid #aaa;
+        }
+        .race-summary-row {
+            background-color: #f0f3f5;
+            font-weight: bold;
+            text-align: left;
+        }
+        .race-subtotal {
+            background-color: #f9f2e0;
+            font-weight: bold;
+            text-align: right;
+            padding-right: 12px;
+        }
+        .race-honors {
+            background-color: #d4efdf;
+            font-weight: bold;
+            text-align: center;
+            color: #1e5a3a;
+        }
+        .race-win { background-color: #e0f2e9; }
+        .race-second { background-color: #fff2cc; }
+        .race-other { background-color: #f9e5e5; }
+        .race-narrative, .race-note-retired {
+            background-color: #f4f0ec;
+            font-style: italic;
+            padding: 8px;
+            color: #4a3b2c;
+            border-left: 3px solid #b0a088;
+        }
+        .text-left { text-align: left; }
+        .text-right { text-align: right; }
+        a { text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .pedigree-footer {
+            text-align: right;
+            padding-top: 6px;
+            font-size: 8pt;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        body { background: #fff; margin: 20px; }
+        .container { max-width: 1350px; margin: 0 auto; }
+        .progeny-table { width: 100%; margin-top: 12px; }
+        .progeny-table td, .progeny-table th { border: 1px solid #aaa; padding: 6px 4px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <table border="0" cellpadding="0" width='98%' style="margin:0 auto;">
+        <tr>
+            <td>
+                <table style="border: 1px solid #000000; border-collapse: collapse;" border="1" cellpadding="0" cellspacing="0" width="100%">
+                    <!-- 六代血统：Riot (USA) 1990 · 重复祖先已准确标注 -->
+                    <tr>
+                        <td rowspan='64' width='13%' class='female'>Riot (USA)<br>Dark Bay/Brown 1990<br>1990.4.17 – 2000.4.18</td>
+                        <td rowspan='32' width='13%' class='male'>Foolish Pleasure (USA)<br>Bay 1972</td>
+                        <td rowspan='16' width='13%' class='male'>What a Pleasure (USA)<br>Chestnut 1965</td>
+                        <td rowspan='8' width='13%' class='male dup-boldruler'>Bold Ruler (USA)<br>Dk B/Br 1954</td>
+                        <td rowspan='4' width='13%' class='male dup-nasrullah'>Nasrullah (GB)<br>Bay 1940</td>
+                        <td rowspan='2' width='13%' class='male dup-nearco'>Nearco (ITY)<br>Brown 1935</td>
+                        <td rowspan='1' width='13%' class='male'>Pharos (GB)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Nogara (ITY)</td></tr>
+                    <tr>
+                        <td rowspan='2' width='13%' class='female dup-mumtazbegum'>Mumtaz Begum (FR)<br>Grey 1932</td>
+                        <td rowspan='1' width='13%' class='male dup-blenheim'>Blenheim (GB)<br>Brown 1919</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female dup-mumtazmahal'>Mumtaz Mahal (GB)</td></tr>
+                    <tr>
+                        <td rowspan='4' width='13%' class='female dup-missdisco'>Miss Disco (USA)<br>Bay 1944</td>
+                        <td rowspan='2' width='13%' class='male dup-discovery'>Discovery (USA)<br>Chestnut 1931</td>
+                        <td rowspan='1' width='13%' class='male'>Display (USA)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Ariadne (USA)</td></tr>
+                    <tr>
+                        <td rowspan='2' width='13%' class='female dup-outdone'>Outdone (USA)<br>Bay 1931</td>
+                        <td rowspan='1' width='13%' class='male'>Pompey (USA)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Sweep Out (USA)</td></tr>
+                    <tr>
+                        <td rowspan='8' width='13%' class='female'>Grey Flight (USA)<br>Grey 1945</td>
+                        <td rowspan='4' width='13%' class='male'>Mahmoud (FR)<br>Grey 1933</td>
+                        <td rowspan='2' width='13%' class='male dup-blenheim'>Blenheim (GB)<br>Brown 1919</td>
+                        <td rowspan='1' width='13%' class='male'>Blandford (IRE)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Malva (GB)</td></tr>
+                    <tr>
+                        <td rowspan='2' width='13%' class='female'>Mah Mahal (GB)<br>Grey 1928</td>
+                        <td rowspan='1' width='13%' class='male'>Gainsborough (GB)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female dup-mumtazmahal'>Mumtaz Mahal (GB)</td></tr>
+                    <tr>
+                        <td rowspan='4' width='13%' class='female'>Planetoid (USA)<br>Grey 1934</td>
+                        <td rowspan='2' width='13%' class='male'>Ariel (USA)<br>Black 1925</td>
+                        <td rowspan='1' width='13%' class='male'>Eternal (USA)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Adana (USA)</td></tr>
+                    <tr>
+                        <td rowspan='2' width='13%' class='female dup-lachica'>La Chica (USA)<br>Grey 1930</td>
+                        <td rowspan='1' width='13%' class='male'>Sweep (USA)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>La Grisette (IRE)</td></tr>
+                    <tr>
+                        <td rowspan='16' width='13%' class='female'>Fool-me-not (USA)<br>Bay 1958</td>
+                        <td rowspan='8' width='13%' class='male'>Tom Fool (USA)<br>Bay 1949</td>
+                        <td rowspan='4' width='13%' class='male'>Menow (USA)<br>Bay 1935</td>
+                        <td rowspan='2' width='13%' class='male'>Pharamond (GB)<br>Brown 1925</td>
+                        <td rowspan='1' width='13%' class='male'>Phalaris (GB)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Selene (GB)</td></tr>
+                    <tr>
+                        <td rowspan='2' width='13%' class='female'>Alcibiades (USA)<br>Chestnut 1927</td>
+                        <td rowspan='1' width='13%' class='male'>Supremus (USA)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Regal Roman (GB)</td></tr>
+                    <tr>
+                        <td rowspan='4' width='13%' class='female'>Gaga (USA)<br>Bay 1942</td>
+                        <td rowspan='2' width='13%' class='male dup-sirgallahad'>Bull Dog (FR)<br>Brown 1927</td>
+                        <td rowspan='1' width='13%' class='male'>Teddy (FR)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Plucky Liege (GB)</td></tr>
+                    <tr>
+                        <td rowspan='2' width='13%' class='female'>Alpoise (USA)<br>Bay 1937</td>
+                        <td rowspan='1' width='13%' class='male'>Equipoise (USA)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Laughing Queen (USA)</td></tr>
+                    <tr>
+                        <td rowspan='8' width='13%' class='female'>Cuadrilla (FR)<br>Chestnut 1943</td>
+                        <td rowspan='4' width='13%' class='male'>Tourbillon (FR)<br>Bay 1928</td>
+                        <td rowspan='2' width='13%' class='male'>Ksar (FR)<br>Chestnut 1918</td>
+                        <td rowspan='1' width='13%' class='male'>Bruleur (FR)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Kizil Kourgan (FR)</td></tr>
+                    <tr>
+                        <td rowspan='2' width='13%' class='female'>Durban (FR)<br>Bay 1918</td>
+                        <td rowspan='1' width='13%' class='male'>Durbar (FR)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Banshee (FR)</td></tr>
+                    <tr>
+                        <td rowspan='4' width='13%' class='female'>Bouillabaisse (GB)<br>Chestnut 1935</td>
+                        <td rowspan='2' width='13%' class='male dup-blenheim'>Blenheim (GB)<br>Brown 1919</td>
+                        <td rowspan='1' width='13%' class='male'>Blandford (IRE)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Malva (GB)</td></tr>
+                    <tr>
+                        <td rowspan='2' width='13%' class='female'>Becti (GB)<br>Bay 1929</td>
+                        <td rowspan='1' width='13%' class='male'>Salmon-Trout (GB)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Mirawala (IRE)</td></tr>
+                    <!-- 母系 Ruffian 分支 -->
+                    <tr>
+                        <td rowspan='32' width='13%' class='female'>Ruffian (USA)<br>Dark Bay/Brown 1972</td>
+                        <td rowspan='16' width='13%' class='male'>Reviewer (USA)<br>Bay 1966</td>
+                        <td rowspan='8' width='13%' class='male dup-boldruler'>Bold Ruler (USA)<br>Dk B/Br 1954</td>
+                        <td rowspan='4' width='13%' class='male dup-nasrullah'>Nasrullah (GB)<br>Bay 1940</td>
+                        <td rowspan='2' width='13%' class='male dup-nearco'>Nearco (ITY)<br>Brown 1935</td>
+                        <td rowspan='1' width='13%' class='male'>Pharos (GB)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Nogara (ITY)</td></tr>
+                    <tr>
+                        <td rowspan='2' width='13%' class='female dup-mumtazbegum'>Mumtaz Begum (FR)<br>Grey 1932</td>
+                        <td rowspan='1' width='13%' class='male dup-blenheim'>Blenheim (GB)<br>Brown 1919</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female dup-mumtazmahal'>Mumtaz Mahal (GB)</td></tr>
+                    <tr>
+                        <td rowspan='4' width='13%' class='female dup-missdisco'>Miss Disco (USA)<br>Bay 1944</td>
+                        <td rowspan='2' width='13%' class='male dup-discovery'>Discovery (USA)<br>Chestnut 1931</td>
+                        <td rowspan='1' width='13%' class='male'>Display (USA)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Ariadne (USA)</td></tr>
+                    <tr>
+                        <td rowspan='2' width='13%' class='female dup-outdone'>Outdone (USA)<br>Bay 1931</td>
+                        <td rowspan='1' width='13%' class='male'>Pompey (USA)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Sweep Out (USA)</td></tr>
+                    <tr>
+                        <td rowspan='8' width='13%' class='female'>Broadway (USA)<br>Bay 1959</td>
+                        <td rowspan='4' width='13%' class='male'>Hasty Road (USA)<br>Bay 1951</td>
+                        <td rowspan='2' width='13%' class='male'>Roman (USA)<br>Bay 1937</td>
+                        <td rowspan='1' width='13%' class='male dup-sirgallahad'>Sir Gallahad (FR)<br>Bay 1920</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Buckup (GB)</td></tr>
+                    <tr>
+                        <td rowspan='2' width='13%' class='female'>Traffic Court (USA)<br>Brown 1938</td>
+                        <td rowspan='1' width='13%' class='male dup-discovery'>Discovery (USA)<br>Chestnut 1931</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Traffic (USA)</td></tr>
+                    <tr>
+                        <td rowspan='4' width='13%' class='female'>Flitabout (USA)<br>Bay 1945</td>
+                        <td rowspan='2' width='13%' class='male'>Challedon (USA)<br>Bay 1936</td>
+                        <td rowspan='1' width='13%' class='male'>Challenger (GB)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Laura Gal (USA)</td></tr>
+                    <tr>
+                        <td rowspan='2' width='13%' class='female'>Bird Flower (USA)<br>Bay 1932</td>
+                        <td rowspan='1' width='13%' class='male'>Blue Larkspur (USA)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>La Mome (GB)</td></tr>
+                    <tr>
+                        <td rowspan='16' width='13%' class='female'>Shenanigans (USA)<br>Grey 1963</td>
+                        <td rowspan='8' width='13%' class='male'>Native Dancer (USA)<br>Grey 1950</td>
+                        <td rowspan='4' width='13%' class='male'>Polynesian (USA)<br>Brown 1942</td>
+                        <td rowspan='2' width='13%' class='male'>Unbreakable (USA)<br>Black 1935</td>
+                        <td rowspan='1' width='13%' class='male'>Sickle (GB)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Blue Glass (FR)</td></tr>
+                    <tr>
+                        <td rowspan='2' width='13%' class='female'>Black Polly (USA)<br>Bay 1936</td>
+                        <td rowspan='1' width='13%' class='male'>Polymelian (GB)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Black Queen (USA)</td></tr>
+                    <tr>
+                        <td rowspan='4' width='13%' class='female'>Geisha (USA)<br>Grey 1943</td>
+                        <td rowspan='2' width='13%' class='male dup-discovery'>Discovery (USA)<br>Chestnut 1931</td>
+                        <td rowspan='1' width='13%' class='male'>Display (USA)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Ariadne (USA)</td></tr>
+                    <tr>
+                        <td rowspan='2' width='13%' class='female'>Miyako (USA)<br>Grey 1935</td>
+                        <td rowspan='1' width='13%' class='male'>John P Grier (USA)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female dup-lachica'>La Chica (USA)<br>Grey 1930</td></tr>
+                    <tr>
+                        <td rowspan='8' width='13%' class='female'>Bold Irish (USA)<br>Dk B/Br 1948</td>
+                        <td rowspan='4' width='13%' class='male'>Fighting Fox (USA)<br>Bay 1935</td>
+                        <td rowspan='2' width='13%' class='male dup-sirgallahad'>Sir Gallahad (FR)<br>Bay 1920</td>
+                        <td rowspan='1' width='13%' class='male'>Teddy (FR)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Plucky Liege (GB)</td></tr>
+                    <tr>
+                        <td rowspan='2' width='13%' class='female'>Marguerite (USA)<br>Chestnut 1920</td>
+                        <td rowspan='1' width='13%' class='male'>Celt (USA)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Fairy Ray (GB)</td></tr>
+                    <tr>
+                        <td rowspan='4' width='13%' class='female'>Erin (USA)<br>Bay 1927</td>
+                        <td rowspan='2' width='13%' class='male'>Transmute (USA)<br>Chestnut 1921</td>
+                        <td rowspan='1' width='13%' class='male'>Broomstick (USA)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Traverse (GB)</td></tr>
+                    <tr>
+                        <td rowspan='2' width='13%' class='female'>Rosie Ogrady (USA)<br>Brown 1915</td>
+                        <td rowspan='1' width='13%' class='male'>Hamburg (USA)</td>
+                    </tr>
+                    <tr><td rowspan='1' width='13%' class='female'>Cherokee Rose (USA)</td></tr>
+                </table>
+
+                <!-- 重新整理的近交分析（全兄弟合并，颜色对应） -->
+                <div class="inbreed-summary">
+                    <b>Inbreeding Analysis · 6‑Generation</b><br>
+                    <span class="inbreed-tag dup-boldruler">Bold Ruler 3×3</span>
+                    <span class="inbreed-tag dup-discovery">Discovery 5×5×5×6</span>
+                    <span class="inbreed-tag dup-blenheim">Blenheim 5×5×6×6</span>
+                    <span class="inbreed-tag dup-sirgallahad">Sir Gallahad / Bull Dog 5×5×6</span>
+                    <span class="inbreed-tag dup-mumtazmahal">Mumtaz Mahal 6×6×6</span>
+                    <span class="inbreed-tag dup-lachica">La Chica 5×6</span>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td align="right" valign="top" class="pedigree-footer">
+                <a href="http://www.pedigreequery.com/">Pedigree</a> generated by PedigreeQuery.com
+            </td>
+        </tr>
+    </table>
+
+    <!-- 赛绩表格（完整保留） -->
+    <table class="race-record-table" border="1" cellpadding="0" cellspacing="0">
+        <tr><td colspan="8" class="race-header">Riot (USA) — Race Record &amp; Results</td></tr>
+        <tr><td colspan="8" class="race-summary-row text-left">31 Starts: 24-7-0-0  |  Earnings: $11,614,575</td></tr>
+        <tr><td colspan="8" class="race-section-header">▶ 1992 Season — 7 Starts: 7-0-0-0  |  $640,500</td></tr>
+        <tr class="race-narrative"><td colspan="8">◇ Undefeated juvenile campaign, cut short by a hairline fracture after the Champagne Stakes.</td></tr>
+        <tr style="background-color:#d5d5d5; font-weight:bold; font-size:7.5pt;"><td>Date</td><td>Race</td><td>Grade</td><td>Track</td><td>Dist.</td><td>Finish</td><td>Earnings</td><td>Margin / Notes</td></tr>
+        <tr class="race-win"><td>May 28</td><td class="text-left">MSW</td><td>—</td><td>Belmont</td><td>5 FD</td><td><b>Win</b></td><td>$14,400</td><td class="text-left">7 lengths</td></tr>
+        <tr class="race-win"><td>Jul 5</td><td class="text-left">Tremont Breeders' Cup S.</td><td>G3</td><td>Belmont</td><td>5½ FD</td><td><b>Win</b></td><td>$55,500</td><td class="text-left">13.5 lengths over England Expects</td></tr>
+        <tr class="race-win"><td>Jul 30</td><td class="text-left">Saratoga Special S.</td><td>G2</td><td>Saratoga</td><td>6 FD</td><td><b>Win</b></td><td>$60,500</td><td class="text-left">22.5 lengths over Tactical Advantage</td></tr>
+        <tr class="race-win"><td>Aug 8</td><td class="text-left">Sapling S.</td><td>G2</td><td>Monmouth Park</td><td>6 FD</td><td><b>Win</b></td><td>$100,000</td><td class="text-left">a nose over Gilded Time</td></tr>
+        <tr class="race-win"><td>Aug 30</td><td class="text-left">Hopeful S.</td><td>G1</td><td>Saratoga</td><td>6½ FD</td><td><b>Win</b></td><td>$100,000</td><td class="text-left">10.5 lengths over Great Navigator</td></tr>
+        <tr class="race-win"><td>Sep 19</td><td class="text-left">Futurity S.</td><td>G1</td><td>Belmont</td><td>7 FD</td><td><b>Win</b></td><td>$60,100</td><td class="text-left">9 lengths over Strolling Along</td></tr>
+        <tr class="race-win"><td>Oct 10</td><td class="text-left">Champagne S.</td><td>G1</td><td>Belmont</td><td>8 FD</td><td><b>Win</b></td><td>$250,000</td><td class="text-left">13 lengths over Sea Hero</td></tr>
+        <tr class="race-note-retired"><td colspan="8">◆ Hairline fracture — season ended. 7-for-7.</td></tr>
+        <tr><td colspan="8" class="race-subtotal">1992 Subtotal: 7 Wins  |  $640,500</td></tr>
+        <tr><td colspan="8" class="race-honors">★ Eclipse Awards: Horse of the Year · Champion 2‑Year‑Old Filly</td></tr>
+
+        <tr><td colspan="8" class="race-section-header">▶ 1993 Season — 5 Starts: 5-0-0-0  |  $3,476,350</td></tr>
+        <tr class="race-narrative"><td colspan="8">◇ Triple Crown sweep. Kentucky Derby (10 lengths), Preakness (8), Belmont (31 lengths, 2:24.0). Returned from fracture to win Breeders' Cup Classic.</td></tr>
+        <tr style="background-color:#d5d5d5; font-weight:bold; font-size:7.5pt;"><td>Date</td><td>Race</td><td>Grade</td><td>Track</td><td>Dist.</td><td>Finish</td><td>Earnings</td><td>Margin / Notes</td></tr>
+        <tr class="race-win"><td>Apr 17</td><td class="text-left">Wood Memorial Invitational S.</td><td>G1</td><td>Aqueduct</td><td>9 FD</td><td><b>Win</b></td><td>$250,000</td><td class="text-left">3.5 lengths over Storm Tower</td></tr>
+        <tr class="race-win"><td>May 1</td><td class="text-left">Kentucky Derby</td><td>G1</td><td>Churchill Downs</td><td>10 FD</td><td><b>Win</b></td><td>$492,950</td><td class="text-left">10 lengths over Sea Hero</td></tr>
+        <tr class="race-win"><td>May 15</td><td class="text-left">Preakness S.</td><td>G1</td><td>Pimlico</td><td>9½ FD</td><td><b>Win</b></td><td>$362,950</td><td class="text-left">8 lengths over Prairie Bayou</td></tr>
+        <tr class="race-win"><td>Jun 5</td><td class="text-left">Belmont S.</td><td>G1</td><td>Belmont</td><td>12 FD</td><td><b>Win</b></td><td>$870,450</td><td class="text-left">31 lengths over Colonial Affair · 2:24.0</td></tr>
+        <tr class="race-note-retired"><td colspan="8">◆ Hairline fracture; returned in autumn.</td></tr>
+        <tr class="race-win"><td>Nov 6</td><td class="text-left">Breeders' Cup Classic</td><td>G1</td><td>Santa Anita</td><td>10 FD</td><td><b>Win</b></td><td>$1,500,000</td><td class="text-left">6 lengths over Arcangues</td></tr>
+        <tr><td colspan="8" class="race-subtotal">1993 Subtotal: 5 Wins  |  $3,476,350</td></tr>
+        <tr><td colspan="8" class="race-honors">★ Eclipse Awards: Horse of the Year · Champion 3‑Year‑Old Filly</td></tr>
+
+        <tr><td colspan="8" class="race-section-header">▶ 1994 Season — 9 Starts: 9-0-0-0  |  $4,050,000</td></tr>
+        <tr class="race-narrative"><td colspan="8">◇ Unbeaten at four. Won every major handicap, including a second Breeders' Cup Classic.</td></tr>
+        <tr style="background-color:#d5d5d5; font-weight:bold; font-size:7.5pt;"><td>Date</td><td>Race</td><td>Grade</td><td>Track</td><td>Dist.</td><td>Finish</td><td>Earnings</td><td>Margin / Notes</td></tr>
+        <tr class="race-win"><td>Feb 5</td><td class="text-left">Donn H.</td><td>G1</td><td>Gulfstream</td><td>9 FD</td><td><b>Win</b></td><td>$150,000</td><td class="text-left">4 lengths over Pistols and Roses</td></tr>
+        <tr class="race-win"><td>Mar 5</td><td class="text-left">Santa Anita H.</td><td>G1</td><td>Santa Anita</td><td>10 FD</td><td><b>Win</b></td><td>$500,000</td><td class="text-left">15 lengths over Stuka</td></tr>
+        <tr class="race-win"><td>May 14</td><td class="text-left">Pimlico Special H.</td><td>G1</td><td>Pimlico</td><td>9½ FD</td><td><b>Win</b></td><td>$300,000</td><td class="text-left">a nose over As Indicated</td></tr>
+        <tr class="race-win"><td>May 30</td><td class="text-left">Metropolitan H.</td><td>G1</td><td>Belmont</td><td>8 FD</td><td><b>Win</b></td><td>$250,000</td><td class="text-left">1 lengths over Holy Bull</td></tr>
+        <tr class="race-win"><td>Jul 2</td><td class="text-left">Hollywood Gold Cup H.</td><td>G1</td><td>Hollywood</td><td>10 FD</td><td><b>Win</b></td><td>$375,000</td><td class="text-left">4.5 lengths over Slew of Damascus</td></tr>
+        <tr class="race-win"><td>Aug 13</td><td class="text-left">Pacific Classic S.</td><td>G1</td><td>Del Mar</td><td>10 FD</td><td><b>Win</b></td><td>$500,000</td><td class="text-left">5.5 lengths over Tinners Way</td></tr>
+        <tr class="race-win"><td>Sep 17</td><td class="text-left">Ruffian H.</td><td>G1</td><td>Belmont</td><td>8½ FD</td><td><b>Win</b></td><td>$100,000</td><td class="text-left">18 lengths over Sky Beauty</td></tr>
+        <tr class="race-win"><td>Oct 8</td><td class="text-left">Jockey Club Gold Cup</td><td>G1</td><td>Belmont</td><td>10 FD</td><td><b>Win</b></td><td>$375,000</td><td class="text-left">a nose over Colonial Affair</td></tr>
+        <tr class="race-win"><td>Nov 5</td><td class="text-left">Breeders' Cup Classic</td><td>G1</td><td>Churchill Downs</td><td>10 FD</td><td><b>Win</b></td><td>$1,500,000</td><td class="text-left">12 lengths over Concern</td></tr>
+        <tr><td colspan="8" class="race-subtotal">1994 Subtotal: 9 Wins  |  $4,050,000</td></tr>
+        <tr><td colspan="8" class="race-honors">★ Eclipse Awards: Horse of the Year · Champion Older Female</td></tr>
+
+        <tr><td colspan="8" class="race-section-header">▶ 1995 Season — 7 Starts: 3-4-0-0  |  $1,922,725</td></tr>
+        <tr class="race-narrative"><td colspan="8">◇ Retired then unretired due to fierce resistance to breeding. Missed Donn with fever, won Santa Anita H., Carter H., Metropolitan H., then four straight seconds.</td></tr>
+        <tr style="background-color:#d5d5d5; font-weight:bold; font-size:7.5pt;"><td>Date</td><td>Race</td><td>Grade</td><td>Track</td><td>Dist.</td><td>Finish</td><td>Earnings</td><td>Margin / Notes</td></tr>
+        <tr class="race-other"><td>Feb 11</td><td class="text-left">Donn H.</td><td>G1</td><td>Gulfstream</td><td>9 FD</td><td><b>SCR</b></td><td>$0</td><td class="text-left">Fever</td></tr>
+        <tr class="race-win"><td>Mar 11</td><td class="text-left">Santa Anita H.</td><td>G1</td><td>Santa Anita</td><td>10 FD</td><td><b>Win</b></td><td>$500,000</td><td class="text-left">a nose over Urgent Request</td></tr>
+        <tr class="race-win"><td>May 6</td><td class="text-left">Carter H.</td><td>G1</td><td>Belmont</td><td>9 FD</td><td><b>Win</b></td><td>$75,000</td><td class="text-left">a nose over Lite the Fuse</td></tr>
+        <tr class="race-win"><td>May 29</td><td class="text-left">Metropolitan H.</td><td>G1</td><td>Belmont</td><td>8 FD</td><td><b>Win</b></td><td>$250,000</td><td class="text-left"></td></tr>
+        <tr class="race-second"><td>Jul 2</td><td class="text-left">Hollywood Gold Cup H.</td><td>G1</td><td>Hollywood</td><td>10 FD</td><td><b>2nd</b></td><td>$200,000</td><td class="text-left">a nose over You and I</td></tr>
+        <tr class="race-second"><td>Sep 16</td><td class="text-left">Woodward S.</td><td>G1</td><td>Belmont</td><td>9 FD</td><td><b>2nd</b></td><td>$113,850</td><td class="text-left">a nose behind Cigar</td></tr>
+        <tr class="race-second"><td>Oct 7</td><td class="text-left">Jockey Club Gold Cup</td><td>G1</td><td>Belmont</td><td>10 FD</td><td><b>2nd</b></td><td>$173,875</td><td class="text-left">a neck behind Cigar</td></tr>
+        <tr class="race-second"><td>Oct 28</td><td class="text-left">Breeders' Cup Classic</td><td>G1</td><td>Belmont</td><td>10 FD</td><td><b>2nd</b></td><td>$610,000</td><td class="text-left">a nose behind Cigar</td></tr>
+        <tr><td colspan="8" class="race-subtotal">1995 Subtotal: 3 Wins, 4 Seconds  |  $1,922,725</td></tr>
+        <tr><td colspan="8" class="race-honors">★ Eclipse Awards: Champion Older Female</td></tr>
+
+        <tr><td colspan="8" class="race-section-header">▶ 1996 Season — 3 Starts: 0-3-0-0  |  $1,660,000</td></tr>
+        <tr class="race-narrative"><td colspan="8">◇ Final season. Second in Donn H., Dubai World Cup, and Breeders' Cup Classic. Hairline fracture after Dubai ended her career.</td></tr>
+        <tr style="background-color:#d5d5d5; font-weight:bold; font-size:7.5pt;"><td>Date</td><td>Race</td><td>Grade</td><td>Track</td><td>Dist.</td><td>Finish</td><td>Earnings</td><td>Margin / Notes</td></tr>
+        <tr class="race-second"><td>Feb 11</td><td class="text-left">Donn H.</td><td>G1</td><td>Gulfstream</td><td>9 FD</td><td><b>2nd</b></td><td>$60,000</td><td class="text-left">a nose behind Cigar</td></tr>
+        <tr class="race-second"><td>Mar 27</td><td class="text-left">Dubai World Cup</td><td>—</td><td>Nad Al Sheba</td><td>10 FD</td><td><b>2nd</b></td><td>$800,000</td><td class="text-left">a nose behind Cigar, Bit him before the game</td></tr>
+        <tr class="race-note-retired"><td colspan="8">◆ Hairline fracture after Dubai.</td></tr>
+        <tr class="race-second"><td>Oct 26</td><td class="text-left">Breeders' Cup Classic</td><td>G1</td><td>Woodbine</td><td>10 FD</td><td><b>2nd</b></td><td>$800,000</td><td class="text-left">a nose behind Alphabet Soup, a neck over Cigar</td></tr>
+        <tr><td colspan="8" class="race-subtotal">1996 Subtotal: 0 Wins, 3 Seconds  |  $1,660,000</td></tr>
+    </table>
+
+    <table class="race-record-table progeny-table" border="1" cellpadding="0" cellspacing="0">
+        <tr><td colspan="4" class="race-header">Progeny of Riot (USA)</td></tr>
+        <tr style="background-color:#d5d5d5; font-weight:bold; font-size:7.5pt;"><td>Year</td><td>Name</td><td>Color / Gender</td><td>Sire</td></tr>
+        <tr class="female"><td>1998</td><td><a href="https://wisteriachestnut.github.io/Pedigree/Rogue" target="_blank">Rogue (USA)</a></td><td>Dk B/Br Mare</td><td>Cigar (USA)</td></tr>
+    </table>
+    <div style="margin-top:12px; font-size:7.5pt; font-family: Arial; text-align:center; color:#555;">
+        Riot — foaled 1990. One and only and best foal of Ruffian. Dam of Rogue. Triple Crown champion, 24-time stakes winner. Legend.
+    </div>
+</div>
+</body>
+</html>
