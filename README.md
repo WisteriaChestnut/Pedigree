@@ -18,10 +18,13 @@
 
 ```text
 Ruffian × Foolish Pleasure
-└── Riot
-    └── Rogue（父：Cigar）
+└── Riot × Cigar
+    └── Rogue
         ├── Rigging（父：Day Trader）
-        └── Ravager（父：Day Trader）
+        ├── Ravager（父：Day Trader）
+        ├── Rascality（父：Tricky Creek）
+        ├── Reckoning（父：Offlee Wild）
+        └── Rampage（父：Day Trader）
 ```
 
 上述关系全部属于本项目的架空设定。真实马名只用于构建平行世界背景。
